@@ -137,6 +137,8 @@ export default App;
 在实际应用中，Portal 组件可能需要访问 React Context。以下是一个结合 Context API 使用 Portal 的示例：
 
 ```javascript
+// with-context-api.js
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 
@@ -197,5 +199,3 @@ export default App;
 ### 总结
 
 React的Portal是一个强大的工具，允许你将子组件渲染到DOM树中的不同位置，而不会影响React组件树的逻辑结构。它在处理模态框、弹出菜单和通知等场景时非常有用，可以解决样式冲突和事件处理问题。如果你在项目中遇到类似需求，Portal是一个值得考虑的解决方案。
-
-希望这些信息对你有所帮助！如果你有任何其他问题或需要进一步的解释，请随时告诉我！
