@@ -1,4 +1,4 @@
-渐进增强（Progressive Enhancement）和优雅降级（Graceful Degradation）是两种不同的Web开发策略，用于处理浏览器和用户设备的多样性，确保良好的用户体验。以下是对这两种策略的详细解释：
+渐进增强（Progressive Enhancement）和优雅降级（Graceful Degradation）是两种不同的Web开发策略，用于处理浏览器和用户设备的多样性，确保良好的用户体验。
 
 ### 渐进增强（Progressive Enhancement）
 
