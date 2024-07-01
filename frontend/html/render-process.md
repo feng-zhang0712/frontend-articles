@@ -143,3 +143,144 @@ JavaScript 资源在渲染过程中有多个关键点，具体处理阶段如下
 4. **减少回流和重绘：** 尽量减少对 DOM 和样式的频繁修改，使用文档片段和批量更新技术。
 
 通过理解 JavaScript 和图片等资源在浏览器渲染过程中的处理阶段，可以更好地优化页面加载性能和用户体验。
+
+### 回流（Reflow）和重绘（Repaint）
+
+回流和重绘是浏览器渲染引擎在处理网页布局和视觉效果变化时的两种重要操作。理解它们的工作原理有助于优化网页性能，防止不必要的计算导致页面变慢。
+
+#### 1. 回流（Reflow）
+
+**定义**：回流（也称为布局）是指当页面的布局和几何属性（如大小、位置）发生变化时，浏览器需要重新计算元素的位置和尺寸。
+
+**触发条件**：
+- 添加或删除可见的DOM元素
+- 元素的尺寸、边距、填充、边框等属性发生变化
+- 浏览器窗口的尺寸发生变化（如用户调整窗口大小）
+- 获取某些属性（如 `offsetWidth`、`offsetHeight`、`clientTop`、`clientLeft` 等）
+
+**示例**：
+```javascript
+document.getElementById("myElement").style.width = "200px";
+```
+
+#### 2. 重绘（Repaint）
+
+**定义**：重绘是指当页面元素的外观发生变化（但不影响布局）时，浏览器需要重新绘制这些元素。这包括颜色、背景、阴影等视觉效果的变化。
+
+**触发条件**：
+- 元素的颜色、背景、阴影等样式变化
+- 不影响布局的视觉变化
+
+**示例**：
+```javascript
+document.getElementById("myElement").style.backgroundColor = "red";
+```
+
+### 优化回流和重绘
+
+回流和重绘是不可避免的，但频繁的回流和重绘会导致性能问题，尤其是在大型的复杂页面上。因此，优化这些操作是提升网页性能的关键。
+
+#### 优化策略：
+
+**1. 尽量减少 DOM 操作**
+
+集中的 DOM 操作比频繁的单次操作更高效。例如，使用文档片段（Document Fragment）批量插入元素，而不是逐个插入。
+
+```javascript
+const fragment = document.createDocumentFragment();
+for (let i = 0; i < 100; i++) {
+  const newDiv = document.createElement('div');
+  fragment.appendChild(newDiv);
+}
+document.body.appendChild(fragment);
+```
+
+**2. 避免逐条修改样式**
+
+尽量通过修改 CSS 类或使用 CSS 文本来一次性改变多个样式。
+
+```javascript
+// 不推荐
+element.style.width = "100px";
+element.style.height = "100px";
+
+// 推荐
+element.className = "newClass";
+
+// 或者
+element.style.cssText = "width: 100px; height: 100px;";
+```
+
+**3. 批量读取和写入 DOM**
+
+尽量将读取和写入 DOM 操作分开，以避免多次触发回流。
+
+```javascript
+// 不推荐
+const height1 = element1.offsetHeight;
+const height2 = element2.offsetHeight;
+
+element1.style.height = height1 + "px";
+element2.style.height = height2 + "px";
+
+// 推荐
+const height1 = element1.offsetHeight;
+const height2 = element2.offsetHeight;
+
+element1.style.height = height1 + "px";
+element2.style.height = height2 + "px";
+```
+
+**4. 使用 CSS 动画和过渡**
+
+CSS 动画和过渡通常比 JavaScript 动画更高效，因为它们可以优化到浏览器的渲染引擎中。
+
+```css
+.box {
+  transition: all 0.5s;
+}
+
+.box:hover {
+  background-color: red;
+  transform: translateX(100px);
+}
+```
+
+**5. 使用 `will-change` 提示浏览器**
+
+`will-change` 可以告知浏览器某些元素可能会发生变化，从而进行优化。
+
+```css
+.element {
+  will-change: transform, opacity;
+}
+```
+
+**6. 避免触发同步布局（Synchronous Layout Thrashing）**
+
+避免在同一个函数中既读取又写入 DOM 属性，以防止浏览器强制同步回流。
+
+```javascript
+// 不推荐
+element.style.left = element.offsetLeft + 10 + "px";
+
+// 推荐
+const left = element.offsetLeft;
+element.style.left = left + 10 + "px";
+```
+
+**7. 使用动画层（Layer）**
+
+将需要频繁重绘的元素提升到单独的图层，可以避免影响其他元素。
+
+```css
+.animated-element {
+  will-change: transform;
+  /* 或者 */
+  transform: translateZ(0);
+}
+```
+
+**8. 选择合适的渲染方案**
+
+对于复杂动画和交互，可以考虑使用 Canvas 或 WebGL，它们提供了更高效的渲染方法。
