@@ -1,28 +1,112 @@
-React 在 16.x 版本中废弃了 `componentWillMount`、`componentWillReceiveProps` 和 `componentWillUpdate` 这些生命周期方法。主要原因是这些方法存在以下问题：
+React 废弃 `componentWillMount`、`componentWillReceiveProps` 和 `componentWillUpdate` 这三个生命周期方法，主要是为了解决它们在以下方面带来的问题：
 
-### 问题
+### 1. 与 React 新的异步渲染机制不兼容
 
-1. **不安全的异步渲染**：
-   - 这些生命周期方法在异步渲染（如 Concurrent Mode）中存在问题。因为它们可能在一次渲染中被多次调用，导致副作用重复发生，产生难以预测的行为。
-  
-2. **代码难以维护**：
-   - 这些方法通常会导致逻辑分散，使得组件难以理解和维护。例如，很多副作用会在多个生命周期方法中被处理，导致代码难以追踪和调试。
+React 新的异步渲染机制（Fiber），允许将组件的渲染工作分解成更小的任务，并在浏览器的空闲时间执行。这种机制可以提高用户界面的响应速度，但它要求生命周期方法的行为更加可预测和安全。
 
-3. **不适用于新架构**：
-   - React 的新架构（如 Fiber）需要更细粒度的控制和优化，这些旧的生命周期方法不适应新的架构。
+而以上三个被废弃的方法，都可能在一次渲染过程中被多次调用，这与异步渲染机制不兼容，容易导致以下问题：
 
-### 解决方法
+- **副作用重复执行**：如果在 `componentWillMount`、`componentWillReceiveProps` 或 `componentWillUpdate` 中执行副作用（例如发起网络请求），那么在异步渲染过程中，这些副作用可能会被重复执行，造成资源浪费和数据不一致。
+- **状态更新不一致**：在异步渲染过程中，组件的状态更新可能会被打断或延迟，如果在这些被废弃的生命周期方法中依赖当前状态进行逻辑判断，就可能导致状态更新不一致的问题。
 
-React 的更新流程分为：render 阶段和 commit 阶段。
+### 2. 容易引发错误和难以维护
 
-componentWillMount、componentWillReceiveProps、componentWillUpdate 这三个生命周期钩子都是在 render 阶段执行的。
+- **`componentWillMount`**：容易与服务端渲染冲突，并且在 React 16 中即使组件未挂载也可能被调用，导致不必要的副作用和混淆。
+- **`componentWillReceiveProps`**：容易在父组件重新渲染而子组件的 props 未发生变化时被调用，造成不必要的逻辑执行和性能问题。
+- **`componentWillUpdate`**：容易在更新阶段执行 DOM 操作，造成与 `componentDidUpdate` 功能重叠，代码逻辑混乱，难以维护。
 
-在 fiber 架构被应用之前，render 阶段是不能被打断的。当页面逐渐复杂之后，就有可能会阻塞页面的渲染，于是 React 推出了 fiber 架构。在应用 fiber 架构之后，低优先级任务的 render 阶段可以被高优先级任务打断。
+### 3. 代码可读性和可预测性降低
 
-而这导致的问题就是：在 render 阶段执行的生命周期函数可能被执行多次。
+这三个方法的调用时机和作用比较微妙，容易让开发者混淆，写出难以理解和维护的代码。
 
-componentWillMount、componentWillReceiveProps、componentWillUpdate 这三个生命周期钩子，如果我们在其中执行一些具有副作用的操作，例如发送网络请求，就有可能导致一个同样的网络请求被执行多次，这显然不是我们想看到的。
+总而言之，React 废弃 `componentWillMount`、`componentWillReceiveProps` 和 `componentWillUpdate` 是为了适应新的异步渲染机制，避免潜在的错误，并提高代码的可读性和可维护性。 
 
-而 React 又没法强迫开发者不去这样做，因为怎么样使用 React 是开发者的自由，所以 React 就新增了一个静态的生命周期 getDerivedStateFromProps，来解决这个问题。
+### 替代方案
 
-用一个静态函数 getDerivedStateFromProps 来取代被废弃的几个生命周期函数，这样开发者就无法通过 this 获取到组件的实例，也不能发送网络请求以及调用 this.setState。它就是强制开发者在 render 之前只做无副作用的操作，间接强制我们无法进行这些不合理不规范的操作，从而避免对生命周期的滥用。
+#### 1. `componentWillMount`
+
+- **问题**：`componentWillMount` 在服务器端渲染和客户端渲染中都会被调用，并且在 React 16 中即使组件未挂载该方法也可能被调用。这导致了不必要的副作用和混淆。
+- **替代方法**：
+  - 使用 `constructor` 方法初始化组件状态和绑定方法。
+  - 在需要副作用的地方使用 `componentDidMount`。
+
+#### 2. `componentWillReceiveProps`
+
+- **问题**：`componentWillReceiveProps` 可能在父组件重新渲染而子组件的 props 未发生变化时被调用，这会导致一些非预期的行为和性能问题。
+- **替代方法**：
+  - 使用 `static getDerivedStateFromProps` 来根据新的 props 更新组件状态。
+  - 使用 `componentDidUpdate` 来处理副作用。
+
+#### 3. `componentWillUpdate`
+
+- **问题**：`componentWillUpdate` 在更新之前被调用，容易引发副作用问题，而且它与 `componentDidUpdate` 作用类似，使用不当也会导致难以追踪的问题。
+- **替代方法**：
+  - 使用 `getSnapshotBeforeUpdate` 与 `componentDidUpdate` 配合来处理更新前后的 DOM 操作。
+
+### 替代方法：`getDerivedStateFromProps` 和 `getSnapshotBeforeUpdate`
+
+#### 1. `static getDerivedStateFromProps`
+
+`getDerivedStateFromProps` 是一个静态方法，它在组件初始化和接收到新的 props 时被调用。它返回一个对象来更新组件的 state，或者返回 null 表示不需要更新 state。
+
+```javascript
+class MyComponent extends React.Component {
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (nextProps.someValue !== prevState.someValue) {
+      return {
+        someValue: nextProps.someValue,
+      };
+    }
+    return null;
+  }
+
+  // other lifecycle methods...
+}
+```
+
+#### 2. `getSnapshotBeforeUpdate`
+
+`getSnapshotBeforeUpdate` 在 DOM 更新前被调用，它的返回值会作为 `componentDidUpdate` 的第三个参数。这个方法适用于在更新 DOM 之前捕获一些信息，比如滚动位置。
+
+```javascript
+class MyComponent extends React.Component {
+  getSnapshotBeforeUpdate(prevProps, prevState) {
+    if (prevProps.list.length < this.props.list.length) {
+      return this.listRef.scrollHeight;
+    }
+    return null;
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (snapshot !== null) {
+      this.listRef.scrollTop = this.listRef.scrollHeight - snapshot;
+    }
+  }
+
+  // other lifecycle methods...
+}
+```
+
+### React 16.3+ 生命周期方法
+
+React 16.3 引入了新的生命周期方法，以下是推荐的新的生命周期方法顺序：
+
+1. **挂载阶段**：
+   - `constructor`
+   - `static getDerivedStateFromProps`
+   - `render`
+   - `componentDidMount`
+
+2. **更新阶段**：
+   - `static getDerivedStateFromProps`
+   - `shouldComponentUpdate`
+   - `render`
+   - `getSnapshotBeforeUpdate`
+   - `componentDidUpdate`
+
+3. **卸载阶段**：
+   - `componentWillUnmount`
+
+### 总结
+
+废弃 `componentWillMount`、`componentWillReceiveProps` 和 `componentWillUpdate` 的主要原因是为了提高 React 代码的可预测性和稳定性，减少副作用和常见错误。取而代之的是 `static getDerivedStateFromProps` 和 `getSnapshotBeforeUpdate`，它们提供了更明确的方式来处理组件状态和 DOM 操作，使代码更易于理解和维护。通过合理使用这些新的生命周期方法，可以更好地管理组件的状态和副作用。
