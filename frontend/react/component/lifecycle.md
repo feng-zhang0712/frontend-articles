@@ -1,4 +1,4 @@
-React 组件生命周期（Lifecycle）指的是组件从创建、更新到销毁的整个过程。理解生命周期方法的工作原理对于编写高效、可维护的 React 组件至关重要。React 的组件生命周期可以分为三个主要阶段：挂载（Mounting）、更新（Updating）和卸载（Unmounting）。在每个阶段，React 提供了特定的生命周期方法，你可以在这些方法中添加自定义逻辑。
+React 组件生命周期（Lifecycle）指的是组件从创建、更新到销毁的整个过程。React 的组件生命周期可以分为三个主要阶段：挂载（Mounting）、更新（Updating）和卸载（Unmounting）。
 
 ### 挂载阶段（Mounting）
 
