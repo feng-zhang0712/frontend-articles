@@ -1,3 +1,5 @@
+## requestIdleCallback
+
 `requestIdleCallback` 是一种浏览器 API，允许开发者在浏览器的空闲时间执行低优先级的任务，而不会影响用户的交互体验。它的设计目的是利用浏览器的空闲时间来执行非紧急的任务，从而提高应用程序的性能和响应速度。
 
 ### 基本用法
@@ -7,12 +9,13 @@
 #### 语法
 
 ```javascript
-let handle = requestIdleCallback(callback[, options])
+const handle = requestIdleCallback(callback[, options])
 ```
 
 - `callback`：当浏览器空闲时要执行的函数。这个函数会接收到一个 `IdleDeadline` 对象作为参数。
 - `options`（可选）：一个配置对象，可以包含以下属性：
   - `timeout`：一个整数，表示在多少毫秒后强制执行回调。
+- `返回值`：一个 ID，可以把它传入 `cancelIdleCallback(handle)` 方法来结束回调。
 
 #### 示例
 
@@ -84,7 +87,3 @@ requestIdleCallbackPolyfill(myIdleCallback);
 ```
 
 在上面的示例中，`requestIdleCallbackPolyfill` 函数检查浏览器是否支持 `requestIdleCallback`，如果不支持，则使用 `setTimeout` 模拟类似的行为。
-
-### 总结
-
-`requestIdleCallback` 是一种强大的工具，可以在浏览器的空闲时间执行低优先级任务，从而提高应用程序的性能和响应速度。通过合理地使用 `requestIdleCallback`，结合任务拆分和优先级管理，你可以确保用户始终享受到流畅的交互体验。如果你有任何其他问题或需要进一步的解释，请随时告诉我！
