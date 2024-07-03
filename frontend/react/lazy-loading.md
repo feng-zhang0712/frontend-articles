@@ -25,6 +25,158 @@ function App() {
 export default App;
 ```
 
+`React.lazy` 和 `Suspense` 是 React 16.6 中引入的功能，用于实现代码分割（Code Splitting）和懒加载（Lazy Loading）。它们允许你在需要时才加载组件，从而提高应用的性能。
+
+此外，Webpack 的 `import()` 语法被用于动态导入模块，这在实现代码分割中扮演了重要角色。
+
+#### React.lazy
+
+`React.lazy` 使得你可以通过动态导入（`import()` 语法）来懒加载一个组件。
+
+**示例**
+
+```jsx
+import React, { Suspense } from 'react';
+const LazyComponent = React.lazy(() => import('./LazyComponent'));
+
+function App() {
+  return (
+    <div>
+      <Suspense fallback={<div>Loading...</div>}>
+        <LazyComponent />
+      </Suspense>
+    </div>
+  );
+}
+
+export default App;
+```
+
+在这个示例中，`React.lazy(() => import('./LazyComponent'))` 返回一个动态导入的组件，只有在组件被渲染时，它才会被加载。
+
+#### Suspense
+
+`Suspense` 组件用于包裹懒加载的组件，并指定在等待这些组件加载时展示的回退内容（如加载指示器）。
+
+**示例**
+
+```jsx
+import React, { Suspense } from 'react';
+const LazyComponent = React.lazy(() => import('./LazyComponent'));
+
+function App() {
+  return (
+    <div>
+      <Suspense fallback={<div>Loading...</div>}>
+        <LazyComponent />
+      </Suspense>
+    </div>
+  );
+}
+
+export default App;
+```
+
+在这个示例中，当 `LazyComponent` 还未加载完成时，`Suspense` 会展示回退内容 `<div>Loading...</div>`。
+
+#### 实现原理
+
+1. **动态导入**：`React.lazy` 使用 ES 提案的 `import()` 语法进行动态导入，它返回一个 Promise，Promise 解析后的模块就是你要加载的组件。
+   
+2. **Suspense**：当 `React.lazy` 返回的 Promise 还未解析时，React 会触发一个 "suspense" 状态，并显示 `Suspense` 组件的 `fallback` 内容。一旦 Promise 解析完成，组件会被渲染，`fallback` 内容会被移除。
+
+#### 简化的实现示例
+
+以下是一个简化的实现示例，帮助你理解 `React.lazy` 和 `Suspense` 的工作原理：
+
+```javascript
+// 模拟 React.lazy
+function lazy(loader) {
+  let Component = null;
+  let promise = loader().then(module => {
+    Component = module.default;
+  });
+
+  return function LazyComponent(props) {
+    if (!Component) {
+      throw promise;
+    }
+    return <Component {...props} />;
+  };
+}
+
+// 模拟 Suspense
+class Suspense extends React.Component {
+  state = { isLoading: true };
+
+  componentDidCatch(promise) {
+    promise.then(() => {
+      this.setState({ isLoading: false });
+    });
+  }
+
+  render() {
+    return this.state.isLoading ? this.props.fallback : this.props.children;
+  }
+}
+```
+
+### Webpack 对 import() 语法的处理原理
+
+Webpack 是一个流行的模块打包工具，它对 `import()` 语法有特别的处理，以实现代码分割和懒加载。
+
+#### import() 语法
+
+`import()` 是 ES 提案的一部分，它允许你在运行时动态加载模块。与静态导入（`import ... from ...`）不同，`import()` 返回一个 Promise，它解析为所加载的模块。
+
+**示例**
+
+```javascript
+import('./module').then(module => {
+  // 使用模块
+});
+```
+
+#### Webpack 的处理
+
+Webpack 在遇到 `import()` 语法时，会进行以下操作：
+
+1. **代码分割**：Webpack 会将动态导入的模块打包成单独的 chunk。这使得模块仅在需要时才被加载，从而减少初始加载时间。
+   
+2. **生成入口点**：Webpack 会为每个动态导入的模块生成一个入口点，并在打包输出时创建相应的文件。
+
+3. **运行时加载**：当动态导入的模块被请求时，Webpack 的运行时会处理该请求，加载相应的 chunk 文件，并解析 Promise。
+
+#### 简化的实现示例
+
+以下是一个简化的 Webpack 处理 `import()` 语法的示例：
+
+```javascript
+// 假设有一个模块 module.js
+const module = {
+  foo: () => console.log('foo'),
+};
+
+// 模拟 Webpack 的 chunk 管理
+const chunks = {
+  'module': () => Promise.resolve(module),
+};
+
+// 模拟 Webpack 的 import() 处理
+function dynamicImport(moduleName) {
+  if (chunks[moduleName]) {
+    return chunks[moduleName]();
+  } else {
+    return Promise.reject(new Error('Module not found'));
+  }
+}
+
+// 使用动态导入
+dynamicImport('module').then(module => {
+  module.foo();
+});
+```
+
 ### 2. React Router 的懒加载
 
 使用 **React Router** 可以通过 `React.lazy` 和 `Suspense` 实现路由级别的懒加载。
