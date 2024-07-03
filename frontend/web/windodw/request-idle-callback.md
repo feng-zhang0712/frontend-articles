@@ -15,7 +15,7 @@ const handle = requestIdleCallback(callback[, options])
 - `callback`：当浏览器空闲时要执行的函数。这个函数会接收到一个 `IdleDeadline` 对象作为参数。
 - `options`（可选）：一个配置对象，可以包含以下属性：
   - `timeout`：一个整数，表示在多少毫秒后强制执行回调。
-- `返回值`：一个 ID，可以把它传入 `cancelIdleCallback(handle)` 方法来结束回调。
+- 返回值：一个 ID，可以把它传入 `cancelIdleCallback()` 方法来结束回调。
 
 #### 示例
 
