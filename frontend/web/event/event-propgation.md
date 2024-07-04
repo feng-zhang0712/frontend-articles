@@ -34,7 +34,178 @@ element.addEventListener('event', handler, useCapture);
 - **handler**：事件处理程序函数。
 - **useCapture**：一个布尔值，表示事件处理程序是否在捕获阶段执行。如果为 `true`，事件处理程序在捕获阶段执行；如果为 `false`（默认值），则在冒泡阶段执行。
 
-### 四、事件捕获和冒泡示例
+### 四、实现原理
+
+#### 1. 事件捕获（Capturing Phase）
+
+事件捕获从根节点开始，沿着DOM树向下传播，直到到达目标元素。在这个过程中，每个祖先元素都会检查是否有捕获阶段的事件处理程序。
+
+#### 2. 事件目标阶段（Target Phase）
+
+事件到达目标元素，并在该元素上触发事件处理程序。这是事件的目标阶段。
+
+#### 3. 事件冒泡（Bubbling Phase）
+
+事件从目标元素开始，沿着DOM树向上传播，直到到达根节点。在这个过程中，每个祖先元素都会检查是否有冒泡阶段的事件处理程序。
+
+### 五、模拟事件捕获、目标阶段和事件冒泡的代码
+
+以下是一段模拟事件捕获、目标阶段和事件冒泡的简单代码：
+
+```javascript
+class Event {
+  constructor(type, target) {
+    this.type = type;
+    this.target = target;
+    this.currentTarget = null;
+    this.eventPhase = 0; // 0: none, 1: capturing, 2: at target, 3: bubbling
+    this.bubbles = true;
+    this.stopPropagationFlag = false;
+  }
+
+  stopPropagation() {
+    this.stopPropagationFlag = true;
+  }
+}
+
+class Element {
+  constructor(name) {
+    this.name = name;
+    this.parentElement = null;
+    this.captureHandlers = {};
+    this.bubbleHandlers = {};
+  }
+
+  addEventListener(type, handler, useCapture = false) {
+    if (useCapture) {
+      if (!this.captureHandlers[type]) this.captureHandlers[type] = [];
+      this.captureHandlers[type].push(handler);
+    } else {
+      if (!this.bubbleHandlers[type]) this.bubbleHandlers[type] = [];
+      this.bubbleHandlers[type].push(handler);
+    }
+  }
+
+  dispatchEvent(event) {
+    // Capturing phase
+    let ancestors = [];
+    for (let el = this; el; el = el.parentElement) {
+      ancestors.push(el);
+    }
+    for (let i = ancestors.length - 1; i >= 0; i--) {
+      event.eventPhase = 1; // Capturing phase
+      event.currentTarget = ancestors[i];
+      if (ancestors[i].captureHandlers[event.type]) {
+        for (const handler of ancestors[i].captureHandlers[event.type]) {
+          handler(event);
+          if (event.stopPropagationFlag) return;
+        }
+      }
+    }
+
+    // Target phase
+    event.eventPhase = 2; // At target
+    event.currentTarget = this;
+    if (this.bubbleHandlers[event.type]) {
+      for (const handler of this.bubbleHandlers[event.type]) {
+        handler(event);
+        if (event.stopPropagationFlag) return;
+      }
+    }
+
+    // Bubbling phase
+    if (event.bubbles) {
+      for (let i = 0; i < ancestors.length; i++) {
+        event.eventPhase = 3; // Bubbling phase
+        event.currentTarget = ancestors[i];
+        if (ancestors[i].bubbleHandlers[event.type]) {
+          for (const handler of ancestors[i].bubbleHandlers[event.type]) {
+            handler(event);
+            if (event.stopPropagationFlag) return;
+          }
+        }
+      }
+    }
+  }
+}
+
+// 创建DOM结构
+const grandparent = new Element('grandparent');
+const parent = new Element('parent');
+const child = new Element('child');
+parent.parentElement = grandparent;
+child.parentElement = parent;
+
+// 添加事件处理程序
+grandparent.addEventListener('click', (event) => {
+  console.log('Grandparent capturing phase');
+}, true);
+parent.addEventListener('click', (event) => {
+  console.log('Parent capturing phase');
+}, true);
+child.addEventListener('click', (event) => {
+  console.log('Child capturing phase');
+}, true);
+
+child.addEventListener('click', (event) => {
+  console.log('Child bubbling phase');
+}, false);
+parent.addEventListener('click', (event) => {
+  console.log('Parent bubbling phase');
+}, false);
+grandparent.addEventListener('click', (event) => {
+  console.log('Grandparent bubbling phase');
+}, false);
+
+// 触发事件
+const event = new Event('click', child);
+child.dispatchEvent(event);
+```
+
+### 六、哪些事件不会冒泡以及原因
+
+并不是所有的事件都会冒泡。以下是一些不会冒泡的事件以及它们不冒泡的原因：
+
+#### 1. `focus` 和 `blur`
+
+这些事件与元素的焦点状态相关，当焦点发生变化时，它们直接在目标元素上触发，不会传播到其他元素。
+
+```javascript
+element.addEventListener('focus', (event) => {
+  console.log('Focus event');
+});
+element.addEventListener('blur', (event) => {
+  console.log('Blur event');
+});
+```
+
+#### 2. `mouseenter` 和 `mouseleave`
+
+这些事件与鼠标进入和离开元素有关，它们是`mouseover`和`mouseout`事件的非冒泡版本，用于避免在内部元素之间的频繁冒泡。
+
+```javascript
+element.addEventListener('mouseenter', (event) => {
+  console.log('Mouse enter event');
+});
+element.addEventListener('mouseleave', (event) => {
+  console.log('Mouse leave event');
+});
+```
+
+#### 3. `load` 和 `unload`
+
+这些事件与页面或资源的加载和卸载相关，通常在窗口或框架元素上触发。
+
+```javascript
+window.addEventListener('load', (event) => {
+  console.log('Window load event');
+});
+window.addEventListener('unload', (event) => {
+  console.log('Window unload event');
+});
+```
+
+### 七、事件捕获和冒泡示例
 
 #### 1. 捕获阶段示例
 
@@ -90,7 +261,7 @@ element.addEventListener('event', handler, useCapture);
 </html>
 ```
 
-### 五、事件传播机制示例
+### 八、事件传播机制示例
 
 以下示例展示了事件在捕获和冒泡阶段的传播顺序：
 
@@ -148,7 +319,7 @@ Parent bubbling phase
 Grandparent bubbling phase
 ```
 
-### 六、阻止事件传播
+### 九、阻止事件传播
 
 #### 1. 阻止事件冒泡
 
@@ -170,7 +341,7 @@ element.addEventListener('click', function(event) {
 });
 ```
 
-### 七、事件委托
+### 十、事件委托
 
 事件委托是一种通过将事件处理程序绑定到父元素，而不是每个子元素，从而处理很多子元素事件的技术。事件委托利用事件冒泡机制，可以提高性能，特别是在动态生成大量子元素时。
 
@@ -201,8 +372,6 @@ element.addEventListener('click', function(event) {
 </html>
 ```
 
-### 八、总结
+### 十一、总结
 
 JavaScript中的事件传播机制包括捕获、目标和冒泡三个阶段。通过理解这些阶段和事件传播的顺序，可以更好地管理和处理事件。可以通过 `addEventListener` 方法指定事件处理程序在捕获阶段还是冒泡阶段执行。使用 `stopPropagation` 和 `stopImmediatePropagation` 方法可以控制事件的传播。事件委托利用事件冒泡机制提高了性能，是处理大量动态子元素事件的有效技术。
-
-掌握事件传播机制对于编写高效和可靠的前端代码至关重要。
