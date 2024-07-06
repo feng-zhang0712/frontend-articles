@@ -1,7 +1,5 @@
 # 深拷贝、浅拷贝
 
-当然可以！以下是重新调整代码块缩进为2个空格后的答案。
-
 ## 一、浅拷贝
 
 ### 1. 定义
@@ -10,7 +8,11 @@
 
 #### 2. 常见方法
 
+- `Array.from()`
+- `Array.prototype.concat()`
+- `Array.prototype.slice()`
 - `Object.assign()`
+- `Object.create()`
 - 展开运算符（`...`）
 
 ```javascript
