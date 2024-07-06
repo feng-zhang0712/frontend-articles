@@ -2,7 +2,7 @@
 
 ## 1. 用户输入 URL
 
-用户在浏览器地址栏中输入 URL，例如：https://www.example.com/path/to/resource?query=param#fragment
+用户在浏览器地址栏中输入 URL，例如：<https://www.example.com/path/to/resource?query=param#fragment>
 
 ## 2. URL 解析
 
