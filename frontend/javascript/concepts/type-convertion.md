@@ -1,6 +1,6 @@
 # Javascript 中的类型转换机制
 
-在 JavaScript 中，类型转换（Type Conversion）是一个常见且重要的概念。类型转换可以分为显式转换和隐式转换。
+Javascript 中的类型转换可以分为显式转换和隐式转换。
 
 ## 一、显式转换
 
