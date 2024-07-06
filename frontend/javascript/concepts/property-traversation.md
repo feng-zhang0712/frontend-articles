@@ -86,7 +86,7 @@ symbols.forEach(symbol => {
 });
 ```
 
-### 七、`Reflect.ownKeys()` 方法
+## 七、`Reflect.ownKeys()` 方法
 
 `Reflect.ownKeys()` 方法返回一个由对象自身的所有属性（包括 Symbol 属性和不可枚举属性）组成的数组。
 
@@ -105,11 +105,11 @@ ownKeys.forEach(key => {
 });
 ```
 
-### 八、遍历数组的其他方法
+## 八、遍历数组的其他方法
 
 虽然数组的遍历并不完全属于“属性”遍历，但在很多场景下也是很常用的。以下是一些常见的遍历数组的方法：
 
-#### 1. `forEach`
+### 1. `forEach`
 
 `forEach` 方法对数组的每个元素执行一次提供的函数。该方法不会改变原数组，且无法使用 `break`、`continue` 跳出循环。
 
@@ -121,7 +121,7 @@ array.forEach((value, index, arr) => {
 });
 ```
 
-#### 2. `map`
+### 2. `map`
 
 `map` 方法创建一个新数组，其结果是对原数组的每个元素调用提供的函数后的返回值。该方法不会改变原数组。
 
@@ -132,7 +132,7 @@ const newArray = array.map(value => value * 2);
 console.log(newArray); // 输出 [2, 4, 6, 8, 10]
 ```
 
-#### 3. `filter`
+### 3. `filter`
 
 `filter` 方法创建一个新数组，其包含所有通过测试函数的元素。该方法不会改变原数组。
 
@@ -143,7 +143,7 @@ const filteredArray = array.filter(value => value > 2);
 console.log(filteredArray); // 输出 [3, 4, 5]
 ```
 
-#### 4. `reduce`
+### 4. `reduce`
 
 `reduce` 方法对数组的每个元素执行提供的函数（从左到右），将其结果汇总为单个返回值。
 
@@ -154,7 +154,7 @@ const sum = array.reduce((accumulator, currentValue) => accumulator + currentVal
 console.log(sum); // 输出 15
 ```
 
-#### 5. `some`
+### 5. `some`
 
 `some` 方法测试数组中的某些元素是否通过了测试函数。只要有一个元素通过测试，返回值就是 `true`。
 
@@ -165,7 +165,7 @@ const hasValueGreaterThanThree = array.some(value => value > 3);
 console.log(hasValueGreaterThanThree); // 输出 true
 ```
 
-#### 6. `every`
+### 6. `every`
 
 `every` 方法测试数组中的所有元素是否通过了测试函数。只有所有元素都通过测试，返回值才是 `true`。
 
@@ -176,7 +176,7 @@ const allValuesGreaterThanZero = array.every(value => value > 0);
 console.log(allValuesGreaterThanZero); // 输出 true
 ```
 
-#### 7. `find`
+### 7. `find`
 
 `find` 方法返回数组中第一个通过测试函数的元素值。如果没有元素通过测试，返回 `undefined`。
 
@@ -187,7 +187,7 @@ const foundValue = array.find(value => value > 3);
 console.log(foundValue); // 输出 4
 ```
 
-#### 8. `findIndex`
+### 8. `findIndex`
 
 `findIndex` 方法返回数组中第一个通过测试函数的元素的索引。如果没有元素通过测试，返回 `-1`。
 
