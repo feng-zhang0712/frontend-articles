@@ -1,6 +1,6 @@
 # 前端跨页面通信方式
 
-## 一. `localStorage`
+## 一、`localStorage`
 
 `localStorage` 是一种简单的方式，适用于在同一浏览器的同源标签页之间共享数据。它具有持久性，但不会触发事件，通知其他标签页数据已更改。
 
@@ -19,7 +19,25 @@ window.addEventListener('storage', (event) => {
 });
 ```
 
-## 二. `BroadcastChannel`
+## 二、`IndexedDB`
+
+`IndexedDB` 是一种低级 API，用于在用户的浏览器中存储大量结构化数据。可以通过它建立一个监听机制来实现通信。
+
+  ```javascript
+  // 1. 存储数据
+  const request = indexedDB.open('myDatabase', 1);
+
+  request.onsuccess = (event) => {
+    const db = event.target.result;
+    const transaction = db.transaction(['myObjectStore'], 'readwrite');
+    const objectStore = transaction.objectStore('myObjectStore');
+    objectStore.put('value', 'key');
+  };
+
+  // 2. 监听数据变化：可以通过定时器或者更高级的监听机制来检测数据变化。
+  ```
+
+## 三、`BroadcastChannel`
 
 `BroadcastChannel` API 允许同源的多个浏览器上下文（如标签页、iframe、worker）之间进行简单的通信。
 
@@ -35,7 +53,7 @@ channel.onmessage = (event) => {
 };
 ```
 
-## 三. `Service Workers` 和 `MessageChannel`
+## 四、`Service Workers` 和 `MessageChannel`
 
 Service Workers 可以在后台运行，并且可以使用 `MessageChannel` 实现多个标签页之间的通信。
 
@@ -54,7 +72,7 @@ messageChannel.port1.onmessage = (event) => {
 };
 ```
 
-## 四. `SharedWorker`
+## 五、`SharedWorker`
 
 `SharedWorker` 可以在多个浏览器上下文中共享，并且允许它们之间进行通信。
 
@@ -80,7 +98,7 @@ worker.port.onmessage = (event) => {
 };
 ```
 
-## 五. `window.postMessage`
+## 六、`window.postMessage`
 
 `window.postMessage` 通常用于跨域 iframe 通信，但也可以用于同域的标签页之间的通信（通过引用彼此的 `window` 对象）。
 
@@ -96,21 +114,3 @@ window.addEventListener('message', (event) => {
   }
 });
 ```
-
-## 六. `IndexedDB`
-
-`IndexedDB` 是一种低级 API，用于在用户的浏览器中存储大量结构化数据。可以通过它建立一个监听机制来实现通信。
-
-  ```javascript
-  // 1. 存储数据
-  const request = indexedDB.open('myDatabase', 1);
-
-  request.onsuccess = (event) => {
-    const db = event.target.result;
-    const transaction = db.transaction(['myObjectStore'], 'readwrite');
-    const objectStore = transaction.objectStore('myObjectStore');
-    objectStore.put('value', 'key');
-  };
-
-  // 2. 监听数据变化：可以通过定时器或者更高级的监听机制来检测数据变化。
-  ```

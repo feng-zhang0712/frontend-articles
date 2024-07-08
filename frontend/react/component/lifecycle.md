@@ -1,25 +1,27 @@
+# React 类组件的生命周期
+
 React 组件生命周期（Lifecycle）指的是组件从创建、更新到销毁的整个过程。React 的组件生命周期可以分为三个主要阶段：挂载（Mounting）、更新（Updating）和卸载（Unmounting）。
 
-### 挂载阶段（Mounting）
+## 一、挂载阶段（Mounting）
 
 挂载阶段是组件被创建并插入到 DOM 中的过程。这个阶段包含以下生命周期方法：
 
 1. **constructor(props)**
 
-   - **调用时间**：组件实例化时调用。
-   - **用途**：用于初始化状态和绑定事件处理方法。
-   - **注意**：不要在此方法中直接调用 `setState`。
+    - **调用时间**：组件实例化时调用。
+    - **用途**：用于初始化状态和绑定事件处理方法。
+    - **注意**：不要在此方法中直接调用 `setState`。
 
-   ```javascript
-   class MyComponent extends React.Component {
-     constructor(props) {
-       super(props);
-       this.state = {
-         count: 0
-       };
-     }
-   }
-   ```
+    ```javascript
+    class MyComponent extends React.Component {
+      constructor(props) {
+        super(props);
+        this.state = {
+          count: 0
+        };
+      }
+    }
+    ```
 
 2. **static getDerivedStateFromProps(props, state)**
 
@@ -71,7 +73,7 @@ React 组件生命周期（Lifecycle）指的是组件从创建、更新到销�
    }
    ```
 
-### 更新阶段（Updating）
+## 二、更新阶段（Updating）
 
 更新阶段是组件重新渲染的过程，可能是由于 props 或 state 的变化引起的。这个阶段包含以下生命周期方法：
 
@@ -138,7 +140,7 @@ React 组件生命周期（Lifecycle）指的是组件从创建、更新到销�
    }
    ```
 
-### 卸载阶段（Unmounting）
+## 三、卸载阶段（Unmounting）
 
 卸载阶段是组件从 DOM 中移除的过程。这个阶段只有一个生命周期方法：
 
@@ -156,7 +158,7 @@ React 组件生命周期（Lifecycle）指的是组件从创建、更新到销�
    }
    ```
 
-### 错误处理阶段（Error Handling）
+## 四、错误处理阶段（Error Handling）
 
 React 提供了一些特殊的生命周期方法，用于处理组件中的错误：
 
@@ -196,7 +198,7 @@ React 提供了一些特殊的生命周期方法，用于处理组件中的错�
    }
    ```
 
-### 使用 Hooks 管理生命周期
+## 五、使用 Hooks 管理生命周期
 
 React Hooks 提供了一些函数来管理函数组件的生命周期：
 
@@ -231,7 +233,3 @@ function MyComponent() {
   );
 }
 ```
-
-### 总结
-
-React 的生命周期方法为组件提供了挂载、更新和卸载期间的控制点。这些方法帮助开发者在适当的时机执行特定的操作，如初始化、更新和清理。通过理解这些生命周期方法，开发者可以编写更高效、更可维护的 React 组件。
