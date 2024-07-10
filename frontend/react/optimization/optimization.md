@@ -132,7 +132,90 @@ const Example = () => (
 
 ### 1.10 使用性能优化工具
 
-React 提供了一些内置的性能优化工具，如 **React DevTools Profiler**，可以帮助你分析和优化性能瓶颈。
+React 的 Profiler 是 React 16 版本中引入的一个开发工具，用于帮助开发者分析和优化 React 应用的性能。它允许你在应用中测量渲染时间和识别性能瓶颈，尤其是在组件树中哪些组件的渲染时间较长或渲染频率较高。Profiler 的使用和分析可以帮助优化 React 应用的性能。
+
+#### (1) 概述
+
+Profiler的主要功能是：
+
+- 记录每个渲染周期中组件树的“渲染时间”。
+- 提供每个组件和子树的渲染时间、渲染次数等信息。
+- 帮助识别性能瓶颈和不必要的渲染。
+
+#### (2) 使用方法
+
+要使用 Profiler，需要将其包裹在你想要分析的组件树中。Profiler 组件接受一个 `id` 和一个 `onRender` 回调函数作为props。
+
+```jsx
+import React, { Profiler } from 'react';
+
+const onRenderCallback = (
+  id, // Profiler 树的 id
+  phase, // "mount" 或 "update"
+  actualDuration, // 本次更新所花费的时间
+  baseDuration, // 理想情况下渲染整个子树所需的时间
+  startTime, // 本次更新开始的时间
+  commitTime, // 本次更新结束的时间
+  interactions // 本次更新的交互
+) => {
+  console.log({
+    id,
+    phase,
+    actualDuration,
+    baseDuration,
+    startTime,
+    commitTime,
+    interactions,
+  });
+};
+
+const App = () => (
+  <Profiler id="App" onRender={onRenderCallback}>
+    <MyComponent />
+  </Profiler>
+);
+
+export default App;
+```
+
+- `id`：Profiler树的ID，用于标识不同的Profiler实例。
+- `phase`：表示当前渲染是“mount”还是“update”。
+- `actualDuration`：本次更新花费的时间。
+- `baseDuration`：在没有memoization（记忆化）优化的情况下，渲染整个子树所需的时间。
+- `startTime`：本次更新开始的时间。
+- `commitTime`：本次更新结束的时间。
+- `interactions`：与本次更新相关的交互。
+
+假设我们有以下组件结构：
+
+```jsx
+const ChildComponent = () => {
+  return <div>Child Component</div>;
+};
+
+const ParentComponent = () => {
+  return (
+    <div>
+      <ChildComponent />
+      <ChildComponent />
+    </div>
+  );
+};
+
+const App = () => {
+  return (
+    <Profiler id="ParentComponent" onRender={onRenderCallback}>
+      <ParentComponent />
+    </Profiler>
+  );
+};
+```
+
+在这个示例中，`onRenderCallback` 会在 `ParentComponent` 及其子组件每次渲染时被调用。通过分析 `actualDuration` 和 `baseDuration`，我们可以确定是否存在性能问题，例如哪些组件渲染过于频繁或者渲染时间过长。
+
+#### （3）使用React Developer Tools
+
+除了在代码中使用 Profiler 组件，你还可以使用 React Developer Tools 进行更直观的性能分析。
 
 ## 二、Webpack 常见的优化措施
 
