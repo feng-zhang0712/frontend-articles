@@ -100,3 +100,7 @@ Set-Cookie: <cookie-name>=<cookie-value>; Domain=<domain-value>; Secure; HttpOnl
 - **设置 HttpOnly**：防止 JavaScript 读取 Cookie，减少 XSS 攻击风险。
 - **设置 SameSite**：防止 CSRF 攻击，控制跨站请求附带 Cookie 的行为。
 - **定期更新 Cookie**：定期更新和验证 Cookie，避免长期使用同一个 Cookie 增加风险。
+
+参考：
+
+- [Cookie](https://wangdoc.com/javascript/bom/cookie)
