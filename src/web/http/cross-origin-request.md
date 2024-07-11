@@ -4,7 +4,62 @@
 
 ## 一、同源策略 (Same-Origin Policy)
 
+### 1.1 概念
+
 由于安全限制，浏览器只能访问与其所在页面在同一源（同一协议、域名、端口）的资源。这种安全机制被称为同源策略（Same-Origin Policy）。同源策略是一种重要的安全机制，用于防止恶意网站读取其他网站的敏感数据。根据同源策略，只有当两个 URL 拥有相同的协议、域名和端口时，它们才被认为是同源的。
+
+### 1.2 同源策略的限制范围
+
+对于非同源应用之间的通信，共有三种行为受到限制。
+
+- 无法读取非同源网页的 Cookie、LocalStorage 和 IndexedDB。
+- 无法接触非同源网页的 DOM。
+- 无法向非同源地址发送 AJAX 请求（可以发送，但浏览器会拒绝接受响应）。
+
+但是，通过一些特殊方法，就可以规避这些限制。
+
+### 1.3 Cookie
+
+Cookie 是服务器写入浏览器的一小段信息，只有同源的网页才能共享。如果两个网页一级域名相同，只是次级域名不同，浏览器允许通过设置 document.domain 共享 Cookie。此时两个网页都需要设置 document.domain 属性，才能达到同源的目的。因为设置 document.domain 的同时，会把端口重置为 null，因此如果只设置一个网页的 document.domain，会导致两个网址的端口不同，还是达不到同源的目的。
+
+注意，这种方法只适用于 Cookie 和 iframe 窗口，LocalStorage 和 IndexedDB 无法通过这种方法，规避同源政策。
+
+### 1.4 iframe 和多窗口通信
+
+iframe 窗口之中的脚本，可以获得父窗口和子窗口。但是，只有在同源的情况下，父窗口和子窗口才能通信；如果跨域，就无法拿到对方的 DOM。这种情况不仅适用于iframe窗口，还适用于window.open方法打开的窗口，只要跨域，父窗口与子窗口之间就无法通信。
+
+### 1.5 片段识别符
+
+片段标识符（fragment identifier）指的是，URL 的#号后面的部分，如果只是改变片段标识符，页面不会重新刷新。通过这种方式，父窗口可以把信息，写入子窗口的片段标识符。此方法对于完全不同源的网站，可以解决跨域窗口的通信问题。
+
+### 1.6 window.postMessage()
+
+HTML5 引入了一个全新的API：跨文档通信 API（Cross-document messaging）。这个 API 为 window 对象新增了一个 `window.postMessage` 方法，允许跨窗口通信，不论这两个窗口是否同源。
+
+```javascript
+otherWindow.postMessage(message, targetOrigin, [transfer]);
+```
+
+`postMessage` 方法的第一个参数是具体的信息内容，第二个参数是接收消息的窗口的源（origin），即“协议 + 域名 + 端口”。也可以设为*，表示不限制域名，向所有窗口发送。
+
+然后，可以通过 `message` 事件，监听发送者的消息。
+
+```javascript
+// 监听 message 消息
+window.addEventListener('message', function (event) {
+  console.log(event);
+},false);
+```
+
+message事件的参数是事件对象event，提供以下三个属性。
+
+- `event.source`：发送消息的窗口
+- `event.origin`: 消息发送者的源（origin），即协议、域名、端口。
+- `event.data`: 消息内容
+
+### 1.7 LocalStorage
+
+通过 `window.postMessage`，可以做到读写其他窗口的 `LocalStorage。`
 
 ## 二、跨域资源共享 (CORS)
 
@@ -180,6 +235,35 @@ fetch('http://localhost:3000/data', {
   .catch(error => console.error('Error:', error));
 ```
 
+### 5.2 WebSocket
+
+WebSocket 是一种通信协议，使用 ws://（非加密）和 wss://（加密）作为协议前缀。该协议不实行同源政策，只要服务器支持，就可以通过它进行跨源通信。
+
+下面是一个例子，浏览器发出的 WebSocket 请求的头信息（摘自[维基百科](https://en.wikipedia.org/wiki/WebSocket)）。
+
+```http
+GET /chat HTTP/1.1
+Host: server.example.com
+Upgrade: websocket
+Connection: Upgrade
+Sec-WebSocket-Key: x3JJHMbDL1EzLkh9GBhXDw==
+Sec-WebSocket-Protocol: chat, superchat
+Sec-WebSocket-Version: 13
+Origin: http://example.com
+```
+
+上面代码中，有一个字段是 `Origin`，表示该请求的请求源（origin），即发自哪个域名。
+
+正是因为有了 `Origin` 这个字段，所以 WebSocket 才没有实行同源政策。因为服务器可以根据这个字段，判断是否许可本次通信。如果该域名在白名单内，服务器就会做出如下回应。
+
+```http
+HTTP/1.1 101 Switching Protocols
+Upgrade: websocket
+Connection: Upgrade
+Sec-WebSocket-Accept: HSmrc0sMlYUkAGmm5OPpG2HaGWk=
+Sec-WebSocket-Protocol: chat
+```
+
 ### 5.2 JSONP (JSON with Padding)
 
 JSONP 是一种跨域请求的老方法，仅支持 `GET` 请求。通过动态创建 `<script>` 标签，并利用其不受同源策略限制的特点来实现跨域请求。
@@ -256,3 +340,8 @@ fetch('http://localhost/api')
   .then(data => console.log(data))
   .catch(error => console.error('Error:', error));
 ```
+
+参考
+
+- [同源限制](https://wangdoc.com/javascript/bom/same-origin)
+- [CORS 通信](https://wangdoc.com/javascript/bom/cors)
