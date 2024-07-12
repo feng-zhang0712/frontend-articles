@@ -12,25 +12,25 @@
 
 对于非同源应用之间的通信，共有三种行为受到限制。
 
-- 无法读取非同源网页的 Cookie、LocalStorage 和 IndexedDB。
 - 无法接触非同源网页的 DOM。
+- 无法读取非同源网页的 Cookie、LocalStorage 和 IndexedDB。
 - 无法向非同源地址发送 AJAX 请求（可以发送，但浏览器会拒绝接受响应）。
 
-但是，通过一些特殊方法，就可以规避这些限制。
+但是，通过一些特殊方法，可以规避这些限制。
 
 ### 1.3 Cookie
 
-Cookie 是服务器写入浏览器的一小段信息，只有同源的网页才能共享。如果两个网页一级域名相同，只是次级域名不同，浏览器允许通过设置 document.domain 共享 Cookie。此时两个网页都需要设置 document.domain 属性，才能达到同源的目的。因为设置 document.domain 的同时，会把端口重置为 null，因此如果只设置一个网页的 document.domain，会导致两个网址的端口不同，还是达不到同源的目的。
+Cookie 是服务器写入浏览器的一小段信息，只有同源的网页才能共享。如果两个网页一级域名相同，只是次级域名不同，浏览器允许通过设置 `document.domain` 共享 Cookie。此时两个网页都需要设置 `document.domain` 属性，才能达到同源的目的。因为设置 `document.domain` 的同时，会把端口重置为 `null`，因此如果只设置一个网页的 `document.domain`，会导致两个网址的端口不同，还是达不到同源的目的。
 
 注意，这种方法只适用于 Cookie 和 iframe 窗口，LocalStorage 和 IndexedDB 无法通过这种方法，规避同源政策。
 
 ### 1.4 iframe 和多窗口通信
 
-iframe 窗口之中的脚本，可以获得父窗口和子窗口。但是，只有在同源的情况下，父窗口和子窗口才能通信；如果跨域，就无法拿到对方的 DOM。这种情况不仅适用于iframe窗口，还适用于window.open方法打开的窗口，只要跨域，父窗口与子窗口之间就无法通信。
+iframe 窗口之中的脚本，可以获得父窗口和子窗口。但是，只有在同源的情况下，父窗口和子窗口才能通信；如果跨域，就无法拿到对方的 DOM。这种情况不仅适用于 iframe 窗口，还适用于 `window.open` 方法打开的窗口，只要跨域，父窗口与子窗口之间就无法通信。
 
 ### 1.5 片段识别符
 
-片段标识符（fragment identifier）指的是，URL 的#号后面的部分，如果只是改变片段标识符，页面不会重新刷新。通过这种方式，父窗口可以把信息，写入子窗口的片段标识符。此方法对于完全不同源的网站，可以解决跨域窗口的通信问题。
+片段标识符（fragment identifier）指的是，URL 的 `#` 号后面的部分，如果只是改变片段标识符，页面不会重新刷新。通过这种方式，父窗口可以把信息，写入子窗口的片段标识符。此方法对于完全不同源的网站，可以解决跨域窗口的通信问题。
 
 ### 1.6 window.postMessage()
 
@@ -40,7 +40,7 @@ HTML5 引入了一个全新的API：跨文档通信 API（Cross-document messagi
 otherWindow.postMessage(message, targetOrigin, [transfer]);
 ```
 
-`postMessage` 方法的第一个参数是具体的信息内容，第二个参数是接收消息的窗口的源（origin），即“协议 + 域名 + 端口”。也可以设为*，表示不限制域名，向所有窗口发送。
+`postMessage` 方法的第一个参数是具体的信息内容，第二个参数是接收消息的窗口的源（origin），即“协议 + 域名 + 端口”。也可以设为 `*`，表示不限制域名，向所有窗口发送。
 
 然后，可以通过 `message` 事件，监听发送者的消息。
 
@@ -53,13 +53,13 @@ window.addEventListener('message', function (event) {
 
 message事件的参数是事件对象event，提供以下三个属性。
 
-- `event.source`：发送消息的窗口
+- `event.source`：发送消息的窗口。
 - `event.origin`: 消息发送者的源（origin），即协议、域名、端口。
-- `event.data`: 消息内容
+- `event.data`: 消息内容。
 
 ### 1.7 LocalStorage
 
-通过 `window.postMessage`，可以做到读写其他窗口的 `LocalStorage。`
+通过 `window.postMessage`，可以做到读写其他窗口的 `LocalStorage`。
 
 ## 二、跨域资源共享 (CORS)
 
@@ -76,7 +76,7 @@ CORS 请求分为两类：简单请求和非简单请求。同时满足以下两
 
 凡是不满足上面两个条件的，都属于非简单请求。一句话，简单请求就是简单的 HTTP 方法与简单的 HTTP 头信息的结合。
 
-这样划分的原因是，表单在历史上一直可以跨源发出请求。简单请求就是表单请求，浏览器沿袭了传统的处理方式，不把行为复杂化，否则开发者可能转而使用表单，规避 CORS 的限制。对于非简单请求，浏览器会采用新的处理方式。
+这样划分的原因是，表单在历史上一直可以跨源发出请求。简单请求就是表单请求，浏览器沿袭了传统的处理方式，不把行为复杂化，否则开发者可能转而使用表单，规避 CORS 的限制。
 
 ## 三、简单请求
 
@@ -101,11 +101,11 @@ Content-Type: text/html; charset=utf-8
 - `Access-Control-Allow-Credentials`（可选）：表示是否允许发送 Cookie，当设置为 `true` 时，`Access-Control-Allow-Origin` 不能是通配符 `*`。
 - `Access-Control-Expose-Headers`（可选）：指定哪些头信息可以在响应中暴露给浏览器。
 
-当浏览器检测到请求满足简单请求的条件时，会直接发送请求，而不需要预检请求（OPTIONS）。如果服务器的响应包含适当的CORS头信息，浏览器将允许访问响应数据，否则将阻止访问。
+当浏览器检测到请求满足简单请求的条件时，会直接发送请求，而不需要预检请求（OPTIONS）。如果服务器的响应包含适当的 CORS 头信息，浏览器将允许访问响应数据，否则将阻止访问。
 
 ### 3.2 withCredentials 属性
 
-为了降低 CSRF 攻击的风险，CORS 请求默认不包含 Cookie 信息。如果服务器需要拿到 Cookie，这时需要服务器显式指定 `Access-Control-Allow-Credentials` 字段，告诉浏览器可以发送 Cookie。
+为了降低 CSRF 攻击的风险，CORS 请求默认不包含 Cookie 信息。如果服务器需要拿到 Cookie，这时服务器会显式指定 `Access-Control-Allow-Credentials` 字段，告诉浏览器可以发送 Cookie。
 
 ```http
 Access-Control-Allow-Credentials: true
