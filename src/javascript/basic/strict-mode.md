@@ -258,3 +258,7 @@ var f = function() {
 
 f(); // 报错
 ```
+
+参考：
+
+- [Javascript 严格模式详解](https://www.ruanyifeng.com/blog/2013/01/javascript_strict_mode.html)
