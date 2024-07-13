@@ -1,6 +1,6 @@
 # 严格模式
 
-严格模式（Strict Mode）是从 ECMAScript 5（ES5）引入的一种 JavaScript 运行模式，它通过抛出更多的错误警告来帮助开发者编写更健壮、更安全的代码。严格模式消除了 JavaScript 中一些不合理、不安全的行为，修复了一些让人困惑的功能，同时让部分代码运行得更快。
+严格模式（Strict Mode）是 ES5 引入的一种 JavaScript 运行模式，它通过抛出更多的错误警告来帮助开发者编写更健壮、更安全的代码。严格模式消除了 JavaScript 中一些不合理、不安全的行为，修复了一些让人困惑的功能，同时让部分代码运行得更快。
 
 ## 一、引入严格模式的目的
 
@@ -49,19 +49,24 @@ x = 10; // ReferenceError: x is not defined
 
 严格模式对动态绑定做了一些限制。某些情况下，只允许静态绑定。也就是说，属性和方法到底归属哪个对象，在编译阶段就确定。这样做有利于编译效率的提高，也使得代码更容易阅读，更少出现意外。
 
-#### （1）禁止使用 with 语句
+#### （1）禁止使用 `with` 语句
 
-因为 with 语句无法在编译时就确定，属性到底归属哪个对象。
+因为 `with` 语句无法在编译时就确定，属性到底归属哪个对象。
 
 ```javascript
-  "use strict";
-　  var v = 1;
-　　with (o){ // 语法错误
-　　  v = 2;
-　　}
+// 非严格模式
+with (Math) {
+  var x = cos(2);
+}
+
+// 严格模式
+"use strict";
+with (Math) {
+  var x = cos(2); // SyntaxError: Strict mode code may not include a with statement
+}
 ```
 
-#### （2）创设eval作用域
+#### （2）创设 `eval` 作用域
 
 正常模式下，Javascript 语言有两种变量作用域（scope）：全局作用域和函数作用域。严格模式创设了第三种作用域：`eval` 作用域。
 
@@ -76,7 +81,7 @@ x = 10; // ReferenceError: x is not defined
 
 ### 3.3 增强的安全措施
 
-#### （1）禁止this关键字指向全局对象
+#### （1）禁止 `this` 关键字指向全局对象
 
 ```javascript
   function f(){
@@ -91,7 +96,7 @@ x = 10; // ReferenceError: x is not defined
 　// 返回true，因为严格模式下，this的值为undefined，所以"!this"为true。
 ```
 
-因此，使用构造函数时，如果忘了加 new，this 不再指向全局对象，而是报错。
+因此，使用构造函数时，如果忘了加 `new`，`this` 不再指向全局对象，而是报错。
 
 ```javascript
 　function f(){
@@ -114,7 +119,7 @@ x = 10; // ReferenceError: x is not defined
 
 ### 3.4 禁止删除不可删除的属性
 
-严格模式下，只有 configurable 设置为 true 的对象属性，才能被删除。
+严格模式下，只有 `configurable` 设置为 `true` 的对象属性，才能被删除。
 
 ```javascript
 // 严格模式
@@ -184,23 +189,6 @@ function sum(a, a, c) {
 "use strict";
 function sum(a, a, c) {
   return a + a + c; // SyntaxError: Duplicate parameter name not allowed in this context
-}
-```
-
-#### 5. 禁用 `with` 语句
-
-严格模式下，`with` 语句被禁用，因为它会导致作用域混淆。
-
-```javascript
-// 非严格模式
-with (Math) {
-  var x = cos(2);
-}
-
-// 严格模式
-"use strict";
-with (Math) {
-  var x = cos(2); // SyntaxError: Strict mode code may not include a with statement
 }
 ```
 
