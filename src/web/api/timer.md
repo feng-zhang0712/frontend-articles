@@ -289,22 +289,11 @@ const intervalId = setInterval(repeatFunction, 1000);
 
 上面的代码，通过 `try...catch` 捕获并处理错误，确保错误不会影响后续的定时任务。
 
-## 五、setTimeout 和 setInterval 的比较
+## 五、应用场景
 
-相同点：
+### 5.1 setTimeout 应用场景
 
-- **基本语法相似**；
-- **异步执行**：两者都是异步操作，回调函数不会立即执行，而是被添加到任务队列中，等待事件循环的调度执行。
-- **事件循环和任务队列**：两者都依赖事件循环和任务队列来调度和执行回调函数。
-
-不同点：
-
-- 执行次数：`setTimeout` 只执行一次回调函数；`setInterval` 会按指定的时间间隔重复执行回调函数，直到被取消。
-- 内部机制：`setTimeout` 计时器到期后，将回调函数添加到任务队列中；`setInterval` 每次到达时间间隔后，都会将回调函数添加到任务队列中，因此如果回调函数执行时间较长，可能会导致回调函数的执行频率低于预期。（或者说，`setTimeout` 可以保证函数在指定的时间间隔内不会执行，而 `setInterval` 无法保证）
-
-## 六、应用场景
-
-### 6.1 延迟执行代码
+#### （1）延迟执行代码
 
 `setTimeout` 最常见的应用场景是延迟执行代码。在指定的时间后执行某个函数，用于实现一些延迟效果或延迟加载。
 
@@ -315,7 +304,7 @@ setTimeout(() => {
 }, 2000);
 ```
 
-### 6.2 模拟异步行为
+#### （2）模拟异步行为
 
 在开发中，有时需要模拟异步行为（例如 API 请求或数据库查询）的延迟响应。
 
@@ -332,11 +321,11 @@ mockApiRequest((data) => {
 });
 ```
 
-#### 3. 防抖（Debouncing）和节流（Throttling）
+#### （3）防抖（Debouncing）和节流（Throttling）
 
 防抖（Debouncing）和节流（Throttling）是前端性能优化中常用的技术，特别是在处理高频率触发的事件时。它们可以有效地减少函数调用次数，提升应用的性能和响应速度。具体的解释，可以参考 [防抖和节流](../../react/optimization/debounce-and-throttle.md) 部分。
 
-#### 4. 动画效果
+#### （4）动画效果
 
 在实现一些简单的动画效果时，可以使用 `setTimeout` 来控制动画帧的时间间隔。
 
@@ -357,9 +346,11 @@ const element = document.getElementById('myElement');
 animateElement(element);
 ```
 
-### `setInterval` 的应用场景
+除此之外，还可以考虑使用 [requestAnimationFrame](../windodw/request-animation-frame.md)。
 
-#### 1. 定时轮询
+### 5.2 setInterval 的应用场景
+
+#### （1）定时轮询
 
 `setInterval` 常用于定时轮询某个状态或数据，例如定时检查服务器状态或轮询获取最新数据。
 
@@ -376,7 +367,7 @@ setTimeout(() => {
 }, 20000);
 ```
 
-#### 2. 实现定时任务
+#### （2）实现定时任务
 
 `setInterval` 可以用来实现定时任务，例如每隔一段时间执行某个操作。
 
@@ -392,7 +383,7 @@ setTimeout(() => {
 }, 15000);
 ```
 
-#### 3. 时钟或计时器
+#### （3）时钟或计时器
 
 `setInterval` 常用于实现时钟或计时器，每秒更新一次显示。
 
@@ -408,7 +399,7 @@ function startClock() {
 startClock();
 ```
 
-#### 4. 动画循环
+#### （4）动画循环
 
 `setInterval` 可以用来实现简单的动画循环效果，在固定时间间隔内更新动画状态。
 
@@ -427,6 +418,21 @@ function animateElement(element) {
 const element = document.getElementById('myElement');
 animateElement(element);
 ```
+
+总之，对于 `setInterval` 来说，除了一些特殊的场景，开发中实际使用的并不多。如果可以使用 `setTimeout` 或者其他更好的方案，应该优先考虑使用它们。
+
+## 六、setTimeout 和 setInterval 的比较
+
+相同点：
+
+- **基本语法相似**；
+- **异步执行**：两者都是异步操作，回调函数不会立即执行，而是被添加到任务队列中，等待事件循环的调度执行。
+- **事件循环和任务队列**：两者都依赖事件循环和任务队列来调度和执行回调函数。
+
+不同点：
+
+- 执行次数：`setTimeout` 只执行一次回调函数；`setInterval` 会按指定的时间间隔重复执行回调函数，直到被取消。
+- 内部机制：`setTimeout` 计时器到期后，将回调函数添加到任务队列中；`setInterval` 每次到达时间间隔后，都会将回调函数添加到任务队列中，因此如果回调函数执行时间较长，可能会导致回调函数的执行频率低于预期。（或者说，`setTimeout` 可以保证函数在指定的时间间隔内不会执行，而 `setInterval` 无法保证）
 
 参考
 
