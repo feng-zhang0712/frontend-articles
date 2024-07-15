@@ -6,7 +6,7 @@ JavaScript 是单线程的，这意味着它一次只能执行一个任务。事
 
 ### 1.1 调用栈（Call Stack）
 
-执行栈（也称为调用栈）是 JavaScript 引擎用来管理函数调用的一个数据结构，保存着所有正在执行的函数。它遵循后进先出（LIFO, Last In First Out）的原则，当一个函数被调用时，它会被压入栈顶；当函数执行完毕时，它会从栈顶弹出。
+调用栈（Call Stack）是 JavaScript 引擎用来管理函数调用的一个数据结构，保存着所有正在执行的函数。它遵循后进先出（LIFO, Last In First Out）的原则，当一个函数被调用时，它会被压入栈顶；当函数执行完毕时，它会从栈顶弹出。
 
 ### 1.2 任务队列（Task Queue）
 
@@ -139,7 +139,7 @@ clearTimeout(timerId);
 
 ### 3.1 介绍
 
-`setInterval` 方法用于按照固定的时间间隔重复调用一个函数。它的返回值是一个整数，可以通过调用 `clearInterval` 方法来取消该定时器。`clearInterval` 的使用方式同 `setInterval` 类似。
+`setInterval` 方法用于按照固定的时间间隔重复调用一个函数。它的返回值是一个整数，可以通过调用 `clearInterval` 方法来取消该定时器。`setInterval` 的使用方式同 `setTimeout` 类似。
 
 ### 3.2 运行机制
 
