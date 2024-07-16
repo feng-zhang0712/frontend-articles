@@ -108,4 +108,5 @@ Set-Cookie: <cookie-name>=<cookie-value>; Domain=<domain-value>; Secure; HttpOnl
 
 参考：
 
+- [HTTP Cookie](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Cookies)
 - [Cookie](https://wangdoc.com/javascript/bom/cookie)
