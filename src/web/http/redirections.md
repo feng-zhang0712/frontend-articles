@@ -19,34 +19,38 @@ HTTP 重定向是指当客户端（通常是浏览器）请求一个 URL，服�
 
 HTTP 重定向主要包括以下几种类型，分别由不同的状态码表示：
 
-### 3.1 301 Moved Permanently（永久重定向）
+### 3.1 300 Multiple Choices
 
-状态码 `301` 表示请求的资源已被永久移动到新的 URL，客户端应将任何未来对该资源的请求自动转到新的 URL。搜索引擎会更新索引以使用新的 URL。
+状态码 `300` 表示，客户端请求一个实际指向多个资源的 URL。比如，服务器上有某个 HTML 文档的英语和法语版本。返回这个代码时，会带有一个选项列表，这样用户就可以选择他希望使用的那一项。有多个版本可用时，客户端需要沟通解决。
+
+### 3.2 301 Moved Permanently（永久重定向）
+
+状态码 `301` 表示，请求的资源已被永久移动到新的 URL，客户端应将任何未来对该资源的请求自动转到新的 URL。搜索引擎会更新索引以使用新的 URL。
 
 ```http
 HTTP/1.1 301 Moved Permanently
 Location: https://www.newdomain.com/newpage
 ```
 
-### 3.2 302 Found（临时重定向）
+### 3.3 302 Found（临时重定向）
 
-状态码 `302` 表示请求的资源临时移动到另一个 URL，客户端应使用新的 URL 进行访问，但搜索引擎不应更新索引。该状态码是 HTTP/1.0 规范的一部分。
+状态码 `302` 表示，请求的资源临时移动到另一个 URL，客户端应使用新的 URL 进行访问，但搜索引擎不应更新索引。该状态码是 HTTP/1.0 规范的一部分。
 
 ```http
 HTTP/1.1 302 Found
 Location: https://www.newdomain.com/temporarypage
 ```
 
-### 3.3 303 See Other（查看其他位置）
+### 3.4 303 See Other（查看其他位置）
 
-状态码 `303` 表示客户端应使用 GET 方法请求另一个 URL，通常用于表单提交后重定向到一个结果页面。它是 HTTP/1.1 规范的一部分。
+状态码 `303` 表示，客户端应使用 GET 方法请求另一个 URL，通常用于表单提交后重定向到一个结果页面。它是 HTTP/1.1 规范的一部分。
 
 ```http
 HTTP/1.1 303 See Other
 Location: https://www.newdomain.com/resultpage
 ```
 
-### 3.4 307 Temporary Redirect（临时重定向）
+### 3.5 307 Temporary Redirect（临时重定向）
 
 状态码 `307` 表示请求的资源临时移动到另一个 URL，客户端应使用原始的 HTTP 方法（如 POST）进行重定向请求。与 `302` 类似，但更严格，明确要求使用原始方法。
 
@@ -55,7 +59,7 @@ HTTP/1.1 307 Temporary Redirect
 Location: https://www.newdomain.com/temporarypage
 ```
 
-### 3.5 308 Permanent Redirect（永久重定向）
+### 3.6 308 Permanent Redirect（永久重定向）
 
 状态码 `308` 表示请求的资源已被永久移动到新的 URL，客户端应将任何未来对该资源的请求自动转到新的 URL，并使用原始 HTTP 方法。与 `301` 类似，但更严格，明确要求使用原始方法。
 
