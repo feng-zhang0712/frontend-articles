@@ -37,7 +37,7 @@ console.log('Hi!');
 
 Promise 的值穿透是指在 Promise 的链式调用中，如果某个 then 方法没有为其参数（即 `onFulfilled` 或 `onRejected`）提供处理函数，Promise 的值会自动穿透到下一个 `then` 方法中。
 
-Promise 发生值穿透的原因，是由于 `Promise.then` 或者 `Promise.catch` 方法接受的参数类型决定的。Promise 的值穿透分为以下几种情况。
+Promise 发生值穿透的原因，是由于 `Promise.then` 或者 `Promise.catch` 方法接受的参数类型决定的。如果 `then` 方法接受的不是函数，就会发生值穿透。Promise 的值穿透分为以下几种情况。
 
 （1）如果 `Promise.then` 方法没有回调函数，那么，之前 Promise 对象的值，会透传到之后的 `then` 方法中。
 
