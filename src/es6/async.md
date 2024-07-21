@@ -275,3 +275,4 @@ console.log(outputPlusValue(100));
 ## 六、参考
 
 - 阮一峰，[async 函数](https://es6.ruanyifeng.com/#docs/async)
+- MDN，[await](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/await)
