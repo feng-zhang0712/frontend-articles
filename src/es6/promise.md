@@ -6,8 +6,23 @@ Promise 是 ES6 中新增的一种异步编程的解决方案，Promise 可以�
 
 Promise对象有以下两个特点。
 
-1. 对象的状态不受外界影响。Promise对象代表一个异步操作，有三种状态：`pending`（进行中）、`fulfilled`（已成功）和 `rejected`（已失败）。只有异步操作的结果，可以决定当前是哪一种状态，任何其他操作都无法改变这个状态。
-2. 一旦状态改变，就不会再变。Promise 对象的状态改变，只有两种可能：从 `pending` 变为 `fulfilled` 和从 pending变为 `rejected`。只要这两种情况发生，就会一直保持这个结果，这时就称为 `resolved`（已定型）。
+1. 对象的状态不受外界影响。Promise 对象代表一个异步操作，有三种状态：`pending`（进行中）、`fulfilled`（已成功）和 `rejected`（已失败）。只有异步操作的结果，可以决定当前是哪一种状态，任何其他操作都无法改变这个状态。
+2. 一旦状态改变，就不会再变。Promise 对象的状态改变，只有两种可能：从 `pending` 变为 `fulfilled` 和从 `pending` 变为 `rejected`。只要这两种情况发生，就会一直保持这个结果，这时就称为 `resolved`（已定型）。
+
+```javascript
+const promise = new Promise((resolve, reject) => {
+  resolve('success');
+  reject('error');
+  resolve('another success');
+});
+
+promise
+  .then(value => console.log(value))
+  .catch(error => console.log(error))
+// success
+```
+
+上面的代码，只会输出 success。因为 Promise 的状态一旦改变之后，就无法变为其他状态。
 
 Promise 也有一些缺点。首先，无法取消 Promise，一旦新建它就会立即执行，无法中途取消。其次，如果不设置回调函数，Promise 内部抛出的错误，不会反应到外部。第三，当处于 `pending` 状态时，无法得知目前进展到哪一个阶段（刚刚开始还是即将完成）。
 
@@ -184,6 +199,36 @@ try {
 
 `Promise.all` 方法会在所有 Promise 对象 `resolved` 或者任何一个 Promise 对象 `rejected` 之后兑现。
 
+```javascript
+function resolveFunc (x) {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve(x, console.log(x));
+    }, 1000);
+  });
+}
+
+function rejectFunc (x) {
+  return new Promise((_, reject) => {
+    setTimeout(() => {
+      reject(`Error: ${x}`, console.log(x));
+    }, 1000 * x);
+  });
+}
+
+Promise.all([resolveFunc(1), rejectFunc(4), resolveFunc(3), rejectFunc(2)])
+  .then(result => console.log(result))
+  .catch(error => console.log(error))
+
+// 1
+// 3
+// 2
+// Error: 2
+// 4
+```
+
+上面的代码，在1秒后输出 `1`、`3`，在2秒后输出 `2`、`Error: 2`，在4秒后输出 `4`。
+
 如果作为参数的 Promise 实例，自己定义了 `catch` 方法，那么如果它 `rejected`，并不会触发 `Promise.all` 的 `catch` 方法。
 
 ```javascript
@@ -205,7 +250,7 @@ Promise.all([p1, p2])
 // ["hello", Error: 报错了]
 ```
 
-上面代码中，`p1` 会 `resolved`，`p2` 首先会 `rejected`，但是 `p2` 有自己的 `catch` 方法，该方法返回的是一个新的 Promise 实例，`p2` 指向的实际上是这个实例。该实例执行完 `catch` 方法后，也会变成 `resolved`，导致 `Promise.all` 方法参数里面的两个实例都会 `resolved`，因此会调用 `then` 方法指定的回调函数，而不会调用 `catch` 方法指定的回调函数。如果 `p2` 没有自己的 `catch` 方法，就会调用 `Promise.all` 的 `catch` 方法。
+上面代码中，`p1` 会 `resolved`，`p2` 首先会 `rejected`，但是 `p2` 有自己的 `catch` 方法，该方法返回的是一个新的、且返回值为被 Promise 包裹的 Error 类型的 Promise 实例，`p2` 指向的实际上是这个实例。该实例执行完 `catch` 方法后，也会变成 `resolved`，导致 `Promise.all` 方法参数里面的两个实例都会 `resolved`，因此会调用 `then` 方法指定的回调函数，而不会调用 `catch` 方法指定的回调函数。如果 `p2` 没有自己的 `catch` 方法，就会调用 `Promise.all` 的 `catch` 方法。
 
 ## 七、Promise.any()
 
