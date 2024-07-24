@@ -84,7 +84,7 @@ module.exports = {
 
 `module` 定义处理不同类型文件模块的规则。即如何处理除 `.js` 文件以外的其他资源，例如 CSS、图片、字体等。`module` 配置项主要包含 `rules` 和 `noParse` 两个属性。
 
-#### (1) module.rules
+#### (1) `module.rules`
 
 `module.rules` 属性是 `module` 配置项的核心部分，它是一个数组，每个元素都是一个规则对象，用于定义如何使用 Loader 加载和转换不同类型的模块。
 
@@ -146,7 +146,7 @@ module.exports = {
 - `url-loader`：和 `file-loader` 类似，可以选择性的把图片转成 base64 格式的字符串，并打包到 js 中，比较合适对小图片的处理。
 - `html-minify-loader`：压缩 HTML。
 
-#### （2）module.noParse
+#### （2）`module.noParse`
 
 `module.noParse` 用于配置哪些模块文件不需要解析。通过 `noParse`，可以跳过对大型库或文件的解析。
 
