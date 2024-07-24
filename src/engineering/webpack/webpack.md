@@ -771,3 +771,7 @@ compiler.run((err, stats) => {
 
 - `emit`：生成资源到输出目录前。
 - `afterEmit`：生成资源到输出目录后。
+
+## 八、参考
+
+- webpack 文档，[webpack](https://webpack.docschina.org/)
