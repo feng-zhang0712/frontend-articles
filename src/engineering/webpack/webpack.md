@@ -86,11 +86,7 @@ module.exports = {
 
 #### (1) `module.rules`
 
-`module.rules` 属性是 `module` 配置项的核心部分，它是一个数组，每个元素都是一个规则对象，用于定义如何使用 Loader 加载和转换不同类型的模块。
-
-Loader 实质上是一些函数，主要用于在 webpack 构建过程中，将不同类型的文件转换为模块。Loader 可以处理 JavaScript 以外的资源文件，例如 CSS、SCSS、TypeScript、图片等。它们允许你在 `import` 或 `require` 模块时预处理文件。
-
-`module.rules` 对象的主要属性如下。
+`module.rules` 属性是 `module` 配置项的核心部分，它是一个数组，每个元素都是一个规则对象，用于定义如何使用 Loader 加载和转换不同类型的模块。`module.rules` 对象的主要属性如下。
 
 - `test`：一个正则表达式，用于匹配文件路径。
 - `exclude`：排除的文件路径，通常用于排除 `node_modules` 目录。
@@ -135,7 +131,7 @@ module.exports = {
 };
 ```
 
-以下是一些 webpack 中常见的 Loader。
+Loader 本质上是一个函数，主要用于在 webpack 构建过程中，将不同类型的文件转换为模块。Loader 可以处理 JavaScript 以外的资源文件，例如 CSS、SCSS、TypeScript、图片等。它们允许你在 `import` 或 `require` 模块时预处理文件。以下是一些 webpack 中常见的 Loader。
 
 - `babel-loader`：用于将最新的 ES 语法转换为浏览器是别的 JavaScript。
 - `style-loader`：将 css 添加到样式标签 `style` 中。
@@ -145,6 +141,8 @@ module.exports = {
 - `file-loader`：分发文件到 output 目录并返回相对路径。
 - `url-loader`：和 `file-loader` 类似，可以选择性的把图片转成 base64 格式的字符串，并打包到 js 中，比较合适对小图片的处理。
 - `html-minify-loader`：压缩 HTML。
+
+注意，大部分 Loader 在使用之前要先下载。
 
 #### （2）`module.noParse`
 
