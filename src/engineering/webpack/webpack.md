@@ -178,15 +178,13 @@ Plugin 是具有 `apply` 方法的 JavaScript 对象。这个 `apply` 方法在 
 
 `mode` 用于设置构建模式，影响 webpack 内置的优化功能。webpack 提供了三种模式。
 
-- `development`
-- `production`
-- `none`
+- `development`：用于开发环境。在这个模式下， 主要侧重于提升构建速度和开发体验。在此模式下， webpack 不会压缩代码，并且会启用 Source Map、HMR（热模块替换）和详细的日志。
+- `production`：用于生产环境。在这个模式下， 主要侧重于优化代码体积和运行性能。在此模式下， webpack 会启用代码压缩和混淆：使用 Terser 插件压缩和混淆、自动移除未使用的代码（Tree Shaking）和 启用各种优化（如代码拆分、作用域提升）等。
+- `none`：不应用任何默认优化或配置。在这个模式下， 只会按照配置文件中的指示进行打包，而不进行额外的优化和处理。
 
 ### 3.6 Resolve
 
-`resolve` 控制模块解析的行为。包括定义模块路径的查找方式、文件扩展名的解析顺序、别名等。
-
-`resolve` 配置项如下。
+`resolve` 控制模块解析的行为。包括定义模块路径的查找方式、文件扩展名的解析顺序、别名等。`resolve` 的主要配置项如下。
 
 #### （1）`resolve.alias`
 
@@ -234,8 +232,6 @@ import Util from 'utils/util'; // 实际引入的是 'src/utils/util.js'
 
 `resolve.plugins` 用于配置一些自定义的解析插件。可以定义自己的解析规则或使用现成的解析插件。
 
-以下是一个 `resolve` 配置的例子。
-
 ```javascript
 const path = require('path');
 
@@ -277,9 +273,7 @@ module.exports = {
 
 ### 3.8 DevServer
 
-`devServer` 用于配置开发服务器。即设置开发环境中的本地服务器，以便进行实时预览、热模块替换（HMR）、代理请求等操作。
-
-`devServer` 常见的配置项如下。
+`devServer` 用于配置开发服务器。即设置开发环境中的本地服务器，以便进行实时预览、热模块替换（HMR）、代理请求等操作。`devServer` 常见的配置项如下。
 
 - **`contentBase`**：指定开发服务器的根目录，即服务器将从哪个目录提供文件。
 - **`host`**：指定开发服务器的主机名。
@@ -403,8 +397,6 @@ webpack 在其构建生命周期的不同阶段会广播一系列事件。
 
 webpack 插件通过订阅这些事件来协调工作。插件在注册时将其逻辑挂载到特定的事件上，当事件被触发时，插件的逻辑会自动执行。
 
-下面是一个自定义的插件。
-
 ```javascript
 class MyPlugin {
   apply(compiler) {
@@ -419,7 +411,7 @@ class MyPlugin {
 module.exports = MyPlugin;
 ```
 
-上面代码中：
+上面代码是一个自定义的插件，其中：
 
 - `apply` 方法用于注册插件。
 - `compiler` 对象是 webpack 编译器实例，提供了绑定事件的钩子（hooks）。
@@ -558,7 +550,9 @@ module.exports = {
 
 Loader 可以以链式调用的方式组合使用。每个 Loader 都应该处理输入文件，并将结果传递给下一个 Loader。
 
-Loader 编写完成之后，就需要在 webpack 配置文件中配置 `module.rules`。它的使用方法，跟普通的 Loader 相同。
+#### （7）配置使用
+
+Loader 编写完成之后，需要在 webpack 配置文件中配置 `module.rules`。它的使用方法，跟普通的 Loader 相同。
 
 ```javascript
 // my-loader.js
@@ -656,6 +650,8 @@ compiler.hooks.emit.tapAsync('MyPlugin', (compilation, callback) => {
   }, 1000);
 });
 ```
+
+#### （6）配置使用
 
 自定义 Plugin 编写完成之后，就需要在 webpack 配置文件中加载和使用。
 
