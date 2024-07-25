@@ -2,7 +2,7 @@
 
 ## 一、概述
 
-webpack 是一个静态模块（比如各种资源文件）打包工具。webpack 会从一个或多个入口点构建一个 依赖图(dependency graph)，然后将项目中所需的每个模块组合成一个或多个 bundles。
+webpack 是一个静态模块（比如各种资源文件）打包工具。webpack 会从一个或多个入口点构建一个依赖图(dependency graph)，然后将项目中所需的每个模块组合成一个或多个 bundles。
 
 ### 1.1 Module
 
@@ -10,27 +10,11 @@ Module（模块） 是 webpack 构建系统的基本单位。在 webpack 中，�
 
 模块封装了特定功能，独立于其他模块。模块之间可以相互依赖，通过 `import` 或 `require` 引入其他模块。不仅限于 JavaScript 文件，任何资源文件都可以作为模块。
 
-### 1.2 Bundle
-
-Bundle（包） 是 webpack 打包后的输出文件，它包含了应用程序的所有模块代码。Bundle 是浏览器可以执行的最终文件，通常是一个或多个 JavaScript 文件。
-
-Bundle 是 webpack 打包的最终结果。在小型项目中，所有模块可能会被打包成一个单一的 Bundle 文件。在大型项目中，可以使用代码拆分（code splitting）将模块打包成多个 Bundle 文件，以优化加载性能。
-
-### 1.3 Chunk
+### 1.2 Chunk
 
 Chunk（代码块） 是 webpack 在打包过程中生成的中间产物。每个 Chunk 包含一组紧密相关的模块。最终，一个或多个 Chunk 会被合并成一个 Bundle。
 
 Chunk 是 webpack 在打包过程中动态生成的。它使得代码拆分成为可能，可以根据不同的策略（如按需加载）生成多个 Chunk。Chunk 可以通过懒加载或动态导入的方式按需加载，以优化应用的加载性能。
-
-他们三者之间的关系是：
-
-- Module 是代码的最小单元，是开发者编写的源文件。
-- Chunk 是 webpack 在打包过程中生成的中间产物，每个 Chunk 包含一组相关的模块。
-- Bundle 是最终的打包结果，包含一个或多个 Chunk，是浏览器可执行的文件。
-
-代码拆分通过将应用程序拆分成多个 Chunk，可以实现按需加载，优化首屏加载时间。
-
-使用动态导入将模块拆分成不同的 Chunk。
 
 ```javascript
 // src/index.js
@@ -38,6 +22,12 @@ import(/* webpackChunkName: "moduleA" */ './moduleA').then(({ greeting }) => {
   console.log(greeting);
 });
 ```
+
+### 1.3 Bundle
+
+Bundle（包） 是 webpack 打包后的输出文件，它包含了应用程序的所有模块代码。Bundle 是浏览器可以执行的最终文件，通常是一个或多个 JavaScript 文件。
+
+Bundle 是 webpack 打包的最终结果。在小型项目中，所有模块可能会被打包成一个单一的 Bundle 文件。在大型项目中，可以使用代码拆分（code splitting）将模块打包成多个 Bundle 文件，以优化加载性能。
 
 ## 二、webpack 占位符
 
@@ -177,8 +167,8 @@ Plugin 是具有 `apply` 方法的 JavaScript 对象。这个 `apply` 方法在 
 `mode` 用于设置构建模式，影响 webpack 内置的优化功能。webpack 提供了三种模式。
 
 - `development`：用于开发环境。在这个模式下， 主要侧重于提升构建速度和开发体验。在此模式下， webpack 不会压缩代码，并且会启用 Source Map、HMR（热模块替换）和详细的日志。
-- `production`：用于生产环境。在这个模式下， 主要侧重于优化代码体积和运行性能。在此模式下， webpack 会启用代码压缩和混淆：使用 Terser 插件压缩和混淆、自动移除未使用的代码（Tree Shaking）和 启用各种优化（如代码拆分、作用域提升）等。
-- `none`：不应用任何默认优化或配置。在这个模式下， 只会按照配置文件中的指示进行打包，而不进行额外的优化和处理。
+- `production`：用于生产环境。在这个模式下， 主要侧重于优化代码体积和运行性能。在此模式下， webpack 会启用代码压缩和混淆、自动移除未使用的代码（Tree Shaking）和启用各种优化（如代码拆分、作用域提升）等。
+- `none`：不应用任何默认优化或配置。在这个模式下，只会按照配置文件中的指示进行打包，而不进行额外的优化和处理。
 
 ### 3.6 Resolve
 
@@ -367,7 +357,7 @@ module.exports = {
 
 webpack 的插件系统基于发布-订阅模式。这个模式允许 webpack 在构建过程的不同阶段广播事件，插件可以订阅这些事件并在适当的时机执行特定的任务。
 
-在 webpack 中，发布者 是 webpack 本身，它在构建过程的不同阶段广播事件。订阅者是 webpack 插件，它们订阅感兴趣的事件并在这些事件触发时执行特定逻辑。
+在 webpack 中，发布者是 webpack 本身，它在构建过程的不同阶段广播事件。订阅者是 webpack 插件，它们订阅感兴趣的事件并在这些事件触发时执行特定逻辑。
 
 ### 4.2 webpack 生命周期广播事件
 
@@ -461,6 +451,104 @@ module.exports = MyPlugin;
 - 异步写入文件到输出目录，当写入完成后调用 `callback` 以通知 webpack 继续构建过程。
 
 ## 五、webpack 的构建流程
+
+webpack 的构建流程，主要包括初始化、编译、打包、优化和生成输出五个阶段。
+
+### 5.1 初始化阶段
+
+在初始化阶段，webpack 根据配置文件和命令行参数进行初始化工作。包括以下步骤：
+
+- **读取配置**：读取 webpack 配置文件（`webpack.config.js`）并解析配置项。
+- **注册插件**：根据配置文件中的 `plugins` 项注册所有插件。
+- **创建编译器对象**：初始化 `Compiler` 对象，这是 webpack 构建的核心引擎，负责整个构建过程的协调工作。
+- **应用插件**：调用每个插件的 `apply` 方法，将插件挂载到 webpack 的钩子上。
+- **触发环境钩子**：触发 `environment` 和 `afterEnvironment` 等初始化阶段的钩子。
+
+```javascript
+const config = require('./webpack.config.js');
+const webpack = require('webpack');
+
+const compiler = webpack(config);
+
+compiler.run((err, stats) => {
+  if (err) {
+    console.error(err);
+    return;
+  }
+  console.log(stats.toString());
+});
+```
+
+初始化阶段的主要钩子如下。
+
+- `initialize`：初始化 webpack。
+- `environment`：设置环境变量。
+- `afterEnvironment`：环境变量设置完成。
+- `entryOption`：处理入口选项。
+
+### 5.2 编译阶段
+
+编译阶段主要负责将源代码转换为 webpack 的模块化表示形式。
+
+- **确定入口点**：根据配置中的 `entry` 项确定入口模块。
+- **递归解析模块**：从入口点出发，递归解析依赖的模块。每个模块都会经过相应的 Loader 处理，转换为 webpack 能够理解的模块。
+- **生成模块依赖图**：构建模块与模块之间的依赖关系图。
+
+以下是编译阶段的详细流程。
+
+1. **创建 Compilation 对象**：`Compiler` 对象会创建一个新的 `Compilation` 对象，用来存储当前编译的状态和结果。
+2. **触发 Compilation 钩子**：触发 `thisCompilation` 和 `compilation` 钩子，通知插件开始编译。
+3. **构建模块**：
+   - **从入口开始**：从入口模块开始，使用 `loader` 对模块进行转换。
+   - **递归解析**：解析模块的依赖（如 `import` 或 `require` 语句）并递归处理依赖的模块。
+   - **生成抽象语法树（AST）**：解析模块代码并生成 AST。
+   - **应用 Loader**：按照配置的 `loader` 对模块进行处理。
+   - **添加模块到依赖图**：将处理后的模块添加到依赖图中。
+
+编译阶段的主要钩子如下。
+
+- `beforeCompile`：编译开始前。
+- `compile`：编译阶段开始。
+- `thisCompilation`：新的 Compilation 创建前。
+- `compilation`：新的 Compilation 创建后。
+
+### 5.3 打包阶段
+
+打包阶段负责将编译后的模块根据依赖图进行打包，生成一个或多个 Chunk。
+
+- **生成 Chunk**：根据入口和依赖关系生成 Chunk，每个 Chunk 代表一个输出文件。
+- **添加 Chunk 到 Compilation**：将生成的 Chunk 添加到 `Compilation` 对象中。
+
+打包阶段的主要钩子如下。
+
+- `make`：从入口点开始构建模块。
+- `afterCompile`：编译完成。
+
+### 5.4 优化阶段
+
+在优化阶段，webpack 会对生成的 Chunk 进行优化，如代码压缩、提取公共模块等。
+
+- **代码拆分**：提取公共模块、动态导入模块等。
+- **压缩代码**：根据配置对代码进行压缩和混淆。
+- **其他优化**：如 Tree Shaking、Scope Hoisting 等。
+
+### 5.5 生成输出阶段
+
+生成输出阶段负责将优化后的代码输出到指定的目录。
+
+- **生成输出资源**：根据 Chunk 生成最终的输出文件（如 JavaScript、CSS、HTML 等）。
+- **写入文件系统**：将生成的文件写入到输出目录（通常是 `dist` 目录）。
+
+以下是生成输出阶段的详细流程。
+
+1. **触发 `emit` 钩子**：在写入文件前触发 `emit` 钩子，通知插件进行最后的修改或添加额外的文件。
+2. **写入文件到输出目录**：将生成的文件写入到输出目录。
+3. **触发 `afterEmit` 钩子**：写入文件后触发 `afterEmit` 钩子，通知插件输出过程已完成。
+
+生成输出阶段的主要钩子如下。
+
+- `emit`：生成资源到输出目录前。
+- `afterEmit`：生成资源到输出目录后。
 
 ## 六、编写自定义 Loader 和 Plugin
 
@@ -671,104 +759,6 @@ module.exports = {
 ```
 
 ## 七、提高 webpack 的构建速度
-
-webpack 的构建流程，主要包括初始化、编译、打包、优化和生成输出五个阶段。
-
-### 7.1 初始化阶段
-
-在这个阶段，webpack 根据配置文件和命令行参数进行初始化工作。包括以下步骤：
-
-- **读取配置**：读取 webpack 配置文件（`webpack.config.js`）并解析配置项。
-- **注册插件**：根据配置文件中的 `plugins` 项注册所有插件。
-- **创建编译器对象**：初始化 `Compiler` 对象，这是 webpack 构建的核心引擎，负责整个构建过程的协调工作。
-- **应用插件**：调用每个插件的 `apply` 方法，将插件挂载到 webpack 的钩子上。
-- **触发环境钩子**：触发 `environment` 和 `afterEnvironment` 等初始化阶段的钩子。
-
-```javascript
-const config = require('./webpack.config.js');
-const webpack = require('webpack');
-
-const compiler = webpack(config);
-
-compiler.run((err, stats) => {
-  if (err) {
-    console.error(err);
-    return;
-  }
-  console.log(stats.toString());
-});
-```
-
-初始化阶段的主要钩子如下。
-
-- `initialize`：初始化 webpack。
-- `environment`：设置环境变量。
-- `afterEnvironment`：环境变量设置完成。
-- `entryOption`：处理入口选项。
-
-### 7.2 编译阶段
-
-编译阶段主要负责将源代码转换为 webpack 的模块化表示形式。
-
-- **确定入口点**：根据配置中的 `entry` 项确定入口模块。
-- **递归解析模块**：从入口点出发，递归解析依赖的模块。每个模块都会经过相应的 Loader 处理，转换为 webpack 能够理解的模块。
-- **生成模块依赖图**：构建模块与模块之间的依赖关系图。
-
-以下是编译阶段的详细流程。
-
-1. **创建 Compilation 对象**：`Compiler` 对象会创建一个新的 `Compilation` 对象，用来存储当前编译的状态和结果。
-2. **触发 Compilation 钩子**：触发 `thisCompilation` 和 `compilation` 钩子，通知插件开始编译。
-3. **构建模块**：
-   - **从入口开始**：从入口模块开始，使用 `loader` 对模块进行转换。
-   - **递归解析**：解析模块的依赖（如 `import` 或 `require` 语句）并递归处理依赖的模块。
-   - **生成抽象语法树（AST）**：解析模块代码并生成 AST。
-   - **应用 Loader**：按照配置的 `loader` 对模块进行处理。
-   - **添加模块到依赖图**：将处理后的模块添加到依赖图中。
-
-编译阶段的主要钩子如下。
-
-- `beforeCompile`：编译开始前。
-- `compile`：编译阶段开始。
-- `thisCompilation`：新的 Compilation 创建前。
-- `compilation`：新的 Compilation 创建后。
-
-### 7.3 打包阶段
-
-打包阶段负责将编译后的模块根据依赖图进行打包，生成一个或多个 Chunk。
-
-- **生成 Chunk**：根据入口和依赖关系生成 Chunk，每个 Chunk 代表一个输出文件。
-- **添加 Chunk 到 Compilation**：将生成的 Chunk 添加到 `Compilation` 对象中。
-
-打包阶段的主要钩子如下。
-
-- `make`：从入口点开始构建模块。
-- `afterCompile`：编译完成。
-
-### 7.4 优化阶段
-
-在优化阶段，webpack 会对生成的 Chunk 进行优化，如代码压缩、提取公共模块等。
-
-- **代码拆分**：提取公共模块、动态导入模块等。
-- **压缩代码**：根据配置对代码进行压缩和混淆。
-- **其他优化**：如 Tree Shaking、Scope Hoisting 等。
-
-### 7.5 生成输出阶段
-
-生成输出阶段负责将优化后的代码输出到指定的目录。
-
-- **生成输出资源**：根据 Chunk 生成最终的输出文件（如 JavaScript、CSS、HTML 等）。
-- **写入文件系统**：将生成的文件写入到输出目录（通常是 `dist` 目录）。
-
-以下是生成输出阶段的详细流程。
-
-1. **触发 emit 钩子**：在写入文件前触发 `emit` 钩子，通知插件进行最后的修改或添加额外的文件。
-2. **写入文件到输出目录**：将生成的文件写入到输出目录。
-3. **触发 afterEmit 钩子**：写入文件后触发 `afterEmit` 钩子，通知插件输出过程已完成。
-
-生成输出阶段的主要钩子如下。
-
-- `emit`：生成资源到输出目录前。
-- `afterEmit`：生成资源到输出目录后。
 
 ## 八、参考
 
