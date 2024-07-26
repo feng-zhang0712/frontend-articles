@@ -6,7 +6,7 @@
 
 在浏览器中，一帧（Frame）是渲染引擎进行一次完整的屏幕刷新操作，通常每秒渲染60帧（即60 FPS）。为了达到流畅的用户体验，浏览器需要在每秒内完成大量的操作。
 
-![Life of a frame](../../assets/life-of-a-frame.webp)
+![Life of a frame](../../../assets/life-of-a-frame.webp)
 *图片来源：[@paul_irish](https://medium.com/@paul_irish/requestanimationframe-scheduling-for-nerds-9c57f7438ef4)*
 
 通过上图可以看出，浏览器一帧内要执行的任务有：
