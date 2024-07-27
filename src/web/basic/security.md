@@ -8,12 +8,6 @@
 
 内容安全策略是通过 HTTP 头或 `<meta>` 标签来定义的安全策略，用于指定哪些资源可以被浏览器加载和执行。CSP 的主要目标是防止各种内容注入攻击，如跨站脚本攻击（Cross-Site Scripting, XSS）、数据注入攻击等。
 
-- **防止 XSS 攻击**：通过限制脚本的加载和执行来源，有效防止恶意脚本的注入和执行。
-- **防止数据注入攻击**：限制资源的加载来源，可以防止攻击者注入恶意资源。
-- **增强内容安全**：细粒度地控制资源的加载和执行，确保 Web 应用加载的资源都是可信的。
-
-#### （2）CSP 的工作原理
-
 CSP 通过定义一组策略指令来控制资源的加载和执行。每个指令指定了允许加载和执行的资源类型及其来源。浏览器在加载页面时，会根据 CSP 指令来决定是否允许加载和执行指定的资源。
 
 CSP 头部使用 `Content-Security-Policy` 字段来定义策略，可以在 HTTP 响应头中设置。
@@ -28,7 +22,7 @@ CSP 也可以使用 `<meta>` 标签在 HTML 文档中定义。
 <meta http-equiv="Content-Security-Policy" content="<policy-directives>">
 ```
 
-#### （3）常见的 CSP 指令
+#### （2）常见的 CSP 指令
 
 CSP 提供了一系列指令来控制不同类型资源的加载和执行。以下是一些常见的 CSP 指令：
 
@@ -41,8 +35,6 @@ CSP 提供了一系列指令来控制不同类型资源的加载和执行。以�
 - `frame-src` 指定允许加载嵌入框架（如 iframe）的来源。
 - `object-src` 指定允许加载对象（如 `<object>`、`<embed>`、`<applet>`）的来源。
 - `media-src` 指定允许加载媒体文件（如音频、视频）的来源。
-
-#### （4）CSP 的值
 
 CSP 指令的值可以是具体的 URL、通配符、关键字等。常见的值包括：
 
@@ -81,7 +73,7 @@ Content-Security-Policy:
 - 允许加载同源的样式表，并允许内联样式。
 - 允许加载同源和 `https://trusted.cdn.com` 来源的脚本。
 
-#### 5. 报告机制
+#### （3）报告机制
 
 CSP 提供了报告机制，当违反策略时，浏览器会将违规信息发送到指定的 URL。
 
@@ -99,7 +91,7 @@ Content-Security-Policy: default-src 'self'; report-to csp-endpoint
 Report-To: {"group":"csp-endpoint","max_age":10886400,"endpoints":[{"url":"/csp-violation-report-endpoint/"}]}
 ```
 
-#### （6）CSP 的应用场景
+#### （4）CSP 的应用场景
 
 - **防止 XSS 攻击**：CSP 可以有效防止 XSS 攻击，通过限制脚本的加载和执行来源，阻止恶意脚本的注入和执行。
 - **防止数据注入攻击**：通过限制数据的加载来源，可以防止攻击者通过数据注入的方式加载和执行恶意资源。
@@ -215,9 +207,7 @@ app.listen(80, () => {
 
 ### 1.4 X-Frame-Options
 
-`X-Frame-Options` 是一个 HTTP 响应头，用于控制浏览器是否允许当前页面在 `<iframe>`、`<frame>`、`<embed>` 等框架标签中加载。它主要用于防止点击劫持（Clickjacking）攻击。
-
-`X-Frame-Options` 有三个有效的值：
+`X-Frame-Options` 是一个 HTTP 响应头，用于控制浏览器是否允许当前页面在 `<iframe>`、`<frame>`、`<embed>` 等框架标签中加载。它主要用于防止点击劫持（Clickjacking）攻击。`X-Frame-Options` 有三个有效的值。
 
 - `DENY`：表示页面不允许在任何框架中加载。
 - `SAMEORIGIN`：表示页面只允许在同一域名下的框架中加载。
@@ -408,7 +398,7 @@ document.body.appendChild(div);
 
 ## 三、跨站请求伪造（CSRF）
 
-跨站请求伪造（Cross-Site Request Forgery，简称 CSRF）是一种网络攻击，攻击者通过伪造用户的请求，诱骗用户在其已登录的状态下执行非预期的操作，从而达到攻击目的。CSRF 攻击利用了用户在某一网站上的身份认证状态，通过在另一个网站上构造恶意请求，迫使用户在未经授权的情况下执行操作，例如转账、修改个人信息等。
+跨站请求伪造（CSRF，Cross-Site Request Forgery）指攻击者冒充受信任的用户向网站发送未经授权的请求。CSRF 攻击通常利用已认证用户的身份，执行恶意操作如转账、修改账户设置、发送消息等。
 
 ### 3.1 CSRF 攻击原理
 
@@ -452,25 +442,33 @@ amount=1000&to_account=attacker_account
 
 ### 3.2 预防 CSRF 的措施
 
-#### （1）CSRF Token
+#### （1）使用 CSRF Token
 
-在每个表单或敏感操作的请求中添加一个随机生成的 CSRF Token，并在服务器端验证其有效性。CSRF Token 是唯一的，并且与用户的会话相关联，攻击者无法轻易获取或伪造。
+在表单请求中使用 CSRF Token，是防范 CSRF 攻击最有效的方法之一。CSRF Token 是一个唯一且不可预测的值，由服务器生成并嵌入到页面中，随后在请求中发送回服务器进行验证。实现步骤如下。
 
-#### （2）SameSite 属性
+- 服务器生成 Token：服务器生成一个唯一的 CSRF Token，将其嵌入到 HTML 表单和用户会话中。
+- 表单提交 Token：表单提交时，CSRF Token 作为隐藏字段或请求头一同提交。
+- 服务器验证 Token：服务器验证请求中的 CSRF Token 是否与会话中的 Token 匹配。
 
-为 Cookie 设置 SameSite 属性，限制跨站请求时携带 Cookie。SameSite 属性可以设置为 `Strict` 或 `Lax`，防止浏览器在跨站请求中发送 Cookie。
+#### （2）使用 SameSite Cookie 属性
 
-```http
-Set-Cookie: session=abcd1234; SameSite=Strict
-```
+SameSite Cookie 属性可以限制第三方网站发送请求时携带 Cookie。SameSite 有三个值：
 
-#### （3）验证 Referer 和 Origin 头
+- Strict：完全禁止第三方请求携带 Cookie。
+- Lax：允许部分第三方请求携带 Cookie（如 GET 请求）。
+- None：允许所有第三方请求携带 Cookie。
+
+#### （3）双重提交 Cookie
+
+在请求中同时提交 CSRF Token 和 Cookie，服务器对比这两个值是否匹配。实现步骤如下。
+
+- 服务器生成 Token：服务器生成 CSRF Token，并将其作为 Cookie 和隐藏字段或请求头一同发送给客户端。
+- 客户端提交 Token：客户端在请求中同时提交 CSRF Token 和 Cookie。
+- 服务器验证 Token：服务器对比请求中的 Token 和 Cookie 中的 Token 是否匹配。
+
+#### （4）验证 Referer 和 Origin 头
 
 服务器端可以检查请求的 Referer 和 Origin 头，确保请求来自合法的来源。如果 Referer 或 Origin 头不匹配，可以拒绝请求。
-
-#### （4）双重提交 Cookie
-
-在提交表单时，将 CSRF Token 通过 Cookie 和表单字段同时发送到服务器，服务器验证这两个值是否一致。攻击者无法获取用户的 Cookie，因此难以伪造有效请求。
 
 ## 四、点击劫持
 
@@ -483,19 +481,17 @@ Set-Cookie: session=abcd1234; SameSite=Strict
 3. **诱导用户点击**：攻击者在恶意网站上放置诱导用户点击的元素，如按钮、链接或图片。这些元素实际上覆盖在目标网站的按钮或链接上。
 4. **执行操作**：用户点击恶意网站上的元素时，实际上点击的是嵌入的目标网站上的按钮或链接，从而执行未授权的操作。
 
-假设攻击者想要诱使用户点击目标网站上的一个按钮，执行转账操作：
-
 ```html
 <!DOCTYPE html>
 <html>
 <body>
-    <div class="cover">Click here to win a prize!</div>
-    <iframe src="https://bank.example.com/transfer"></iframe>
+  <div class="cover">Click here to win a prize!</div>
+  <iframe src="https://bank.example.com/transfer"></iframe>
 </body>
 </html>
 ```
 
-用户点击 "Click here to win a prize!" 文本时，实际上点击的是银行网站上的转账按钮。
+上面的代码，假设攻击者想要诱使用户点击目标网站上的一个按钮，执行转账操作。用户点击 `"Click here to win a prize!"` 文本时，实际上点击的是银行网站上的转账按钮。
 
 ### 4.2 预防措施
 
@@ -725,3 +721,59 @@ DELIMITER ;
 def handle_internal_error(error):
   return "Internal Server Error", 500
 ```
+
+
+
+
+
+DOS 和 DDOS 的原理及防御方式
+1. DOS（Denial of Service）攻击
+原理
+DOS 攻击（拒绝服务攻击）是指攻击者通过向目标服务器发送大量请求，消耗其资源（如带宽、CPU、内存等），使目标服务器无法正常响应合法用户的请求。DOS 攻击的目的在于使服务瘫痪或不可用。
+常见的 DOS 攻击类型包括：
+ICMP Flood：
+攻击者发送大量的 ICMP Echo 请求（ping）消息，消耗目标主机的带宽和处理能力。
+SYN Flood：
+攻击者发送大量的 TCP SYN 请求（通常是伪造的源地址），使目标服务器忙于处理这些伪造的连接请求，占用其资源。
+UDP Flood：
+攻击者向目标主机发送大量的 UDP 数据包，试图使目标主机处理这些数据包，消耗其资源。
+HTTP Flood：
+攻击者发送大量的 HTTP 请求，使目标服务器的 Web 服务资源耗尽，无法响应正常用户的请求。
+防御方式
+网络硬件防火墙和过滤器：
+使用硬件防火墙和过滤器来检测和阻止异常流量。
+限速和流量控制：
+实施限速策略，限制单个 IP 地址的连接速率和请求数量。
+IP 黑白名单：
+通过维护 IP 黑白名单，阻止已知的恶意 IP 地址。
+使用抗 DOS 工具：
+使用专业的抗 DOS 工具和服务（如 Cloudflare、Akamai 等），这些工具可以自动检测和缓解 DOS 攻击。
+系统资源优化：
+优化系统配置，提高服务器的处理能力和资源利用率。
+2. DDOS（Distributed Denial of Service）攻击
+原理
+DDOS 攻击（分布式拒绝服务攻击）是指攻击者通过控制大量的僵尸网络（Botnet），从多个分布在不同地理位置的设备向目标服务器发送大量请求，导致目标服务器无法正常工作。与 DOS 攻击不同，DDOS 攻击具有更高的破坏力和复杂性，因为它是从多个源同时发起的。
+常见的 DDOS 攻击类型包括：
+Bandwidth Saturation：
+攻击者通过发送大量流量占用目标网络的带宽，使合法用户无法访问。
+Application Layer Attacks：
+攻击者针对特定的应用层服务（如 HTTP、DNS、SMTP 等）发送大量请求，使应用服务耗尽资源。
+Protocol Attacks：
+攻击者利用协议漏洞或实现缺陷，发送畸形或恶意数据包，使目标服务崩溃或消耗资源。
+防御方式
+分布式防护和内容分发网络（CDN）：
+使用 CDN 和分布式防护方案，将流量分散到多个分布式节点，减轻单个服务器的压力。
+流量分析和异常检测：
+实施流量分析工具，实时监控网络流量，检测和阻止异常流量。
+自动化防护系统：
+部署自动化防护系统，能够在攻击发生时自动调整防护策略和扩展资源。
+冗余和负载均衡：
+增加服务器的冗余和使用负载均衡，将流量分散到多个服务器，避免单点故障。
+使用专业的 DDOS 防护服务：
+使用专业的 DDOS 防护服务（如 Cloudflare、Akamai、Amazon Shield 等），这些服务提供强大的防护能力和专业的缓解方案。
+IP 黑白名单和地理封锁：
+通过维护 IP 黑白名单和实施地理封锁，阻止已知的恶意 IP 地址和特定地区的流量。
+防火墙和安全网关：
+配置防火墙和安全网关，设置严格的访问控制策略和流量过滤规则。
+应用层防护：
+在应用层实施防护措施，如 WAF（Web 应用防火墙）和限速策略，防止应用层攻击。
