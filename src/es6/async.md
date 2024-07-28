@@ -207,11 +207,9 @@ console.log("script sync part end");
 
 ### 3.4 使用注意点
 
-a. `await` 命令只能用在 `async` 函数之中，如果用在普通函数，就会报错。
-
-b. `for` 循环和数组的 `reduce` 方法支持 `async` 函数。
-
-c. `async` 函数可以保留运行堆栈。
+- `await` 命令只能用在 `async` 函数之中，如果用在普通函数，就会报错。
+- `for` 循环和数组的 `reduce` 方法支持 `async` 函数。
+- `async` 函数可以保留运行堆栈。
 
 ```javascript
 const a = () => {
