@@ -202,7 +202,6 @@ class MyComponent extends React.Component {
 - 错误边界自身抛出的错误。
 - 服务端渲染中的错误。
 
-
 ```javascript
 class MyComponent extends React.Component {
   componentDidCatch(error, info) {
