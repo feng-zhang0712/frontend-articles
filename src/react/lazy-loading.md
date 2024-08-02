@@ -4,8 +4,6 @@
 
 这是 React 官方推荐的懒加载方式，可以用来动态加载组件。在 React 16.6 及更高版本中引入。
 
-#### 示例：
-
 ```jsx
 import React, { lazy, Suspense } from 'react';
 
@@ -33,8 +31,6 @@ export default App;
 
 `React.lazy` 使得你可以通过动态导入（`import()` 语法）来懒加载一个组件。
 
-**示例**
-
 ```jsx
 import React, { Suspense } from 'react';
 const LazyComponent = React.lazy(() => import('./LazyComponent'));
@@ -57,8 +53,6 @@ export default App;
 #### Suspense
 
 `Suspense` 组件用于包裹懒加载的组件，并指定在等待这些组件加载时展示的回退内容（如加载指示器）。
-
-**示例**
 
 ```jsx
 import React, { Suspense } from 'react';
@@ -129,7 +123,6 @@ Webpack 是一个流行的模块打包工具，它对 `import()` 语法有特别
 
 `import()` 是 ES 提案的一部分，它允许你在运行时动态加载模块。与静态导入（`import ... from ...`）不同，`import()` 返回一个 Promise，它解析为所加载的模块。
 
-**示例**
 
 ```javascript
 import('./module').then(module => {
@@ -142,12 +135,10 @@ import('./module').then(module => {
 Webpack 在遇到 `import()` 语法时，会进行以下操作：
 
 1. **代码分割**：Webpack 会将动态导入的模块打包成单独的 chunk。这使得模块仅在需要时才被加载，从而减少初始加载时间。
-   
+
 2. **生成入口点**：Webpack 会为每个动态导入的模块生成一个入口点，并在打包输出时创建相应的文件。
 
 3. **运行时加载**：当动态导入的模块被请求时，Webpack 的运行时会处理该请求，加载相应的 chunk 文件，并解析 Promise。
-
-#### 简化的实现示例
 
 以下是一个简化的 Webpack 处理 `import()` 语法的示例：
 
@@ -181,8 +172,6 @@ dynamicImport('module').then(module => {
 
 使用 **React Router** 可以通过 `React.lazy` 和 `Suspense` 实现路由级别的懒加载。
 
-#### 示例：
-
 ```jsx
 import React, { lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
@@ -210,8 +199,6 @@ export default App;
 
 在使用 Webpack 等打包工具时，可以利用动态导入来实现模块的懒加载。你可以使用 `import()` 函数来动态导入模块。
 
-#### 示例：
-
 ```jsx
 import React, { useState, useEffect } from 'react';
 
@@ -238,8 +225,6 @@ export default App;
 
 除了 React 内置的懒加载方法，还可以使用一些第三方库来实现懒加载，比如 `react-loadable`。
 
-#### react-loadable 示例：
-
 ```jsx
 import React from 'react';
 import Loadable from 'react-loadable';
@@ -263,8 +248,6 @@ export default App;
 ### 5. 图片懒加载
 
 对于图片等资源，可以使用一些库来实现懒加载，如 `react-lazyload` 或者原生的 `loading="lazy"` 属性。
-
-#### react-lazyload 示例：
 
 ```jsx
 import React from 'react';
@@ -300,8 +283,6 @@ export default App;
 ### 6. Intersection Observer API
 
 使用原生的 Intersection Observer API 可以实现懒加载。这种方法需要自定义更多的逻辑，但可以提供更高的灵活性。
-
-#### 示例：
 
 ```jsx
 import React, { useEffect, useRef, useState } from 'react';
@@ -356,8 +337,6 @@ export default App;
 ### 7. 代码拆分（Code Splitting）
 
 利用 Webpack 等打包工具的代码拆分功能，可以按需加载代码。这与动态导入密切相关，通常结合使用。
-
-#### 示例：
 
 ```jsx
 // 使用 Webpack 的动态导入
