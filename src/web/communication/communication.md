@@ -24,33 +24,25 @@ window.addEventListener('storage', (event) => {
 
 `BroadcastChannel` 是一种简单而强大的 Web API，允许同源的不同浏览上下文（如不同的标签页、窗口、iframe 等）之间进行广播消息。它在现代浏览器中得到了广泛支持，是实现跨标签页或窗口通信的有效工具。
 
-### 主要特性
+主要特性
 
 - **同源限制**：只有同源的上下文才能通过 `BroadcastChannel` 进行通信。
 - **广播机制**：消息会被发送到所有订阅同一频道的上下文中。
 - **简单易用**：API 设计简洁，使用起来非常方便。
 
-### 基本用法
-
-#### 创建频道
-
-创建一个 `BroadcastChannel` 实例时，需要指定一个频道名称：
+创建一个 `BroadcastChannel` 实例时，需要指定一个频道名称。
 
 ```javascript
 const channel = new BroadcastChannel('my_channel');
 ```
 
-#### 发送消息
-
-使用 `postMessage` 方法向频道发送消息：
+使用 `postMessage` 方法向频道发送消息。
 
 ```javascript
 channel.postMessage('Hello, World!');
 ```
 
-#### 接收消息
-
-使用 `addEventListener` 方法监听 `message` 事件来接收消息：
+使用 `addEventListener` 方法监听 `message` 事件来接收消息。
 
 ```javascript
 channel.addEventListener('message', (event) => {
@@ -58,15 +50,11 @@ channel.addEventListener('message', (event) => {
 });
 ```
 
-#### 关闭频道
-
-当不再需要通信时，可以通过调用 `close` 方法关闭频道：
+当不再需要通信时，可以通过调用 `close` 方法关闭频道。
 
 ```javascript
 channel.close();
 ```
-
-### 示例
 
 下面是一个完整的示例，展示了如何在两个不同的标签页或窗口之间使用 `BroadcastChannel` 进行通信。
 
