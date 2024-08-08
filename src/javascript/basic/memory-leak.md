@@ -113,7 +113,7 @@ const closure = createClosure();
 // largeObject 将一直保存在内存中，直到 closure 被释放
 ```
 
-#### 4. DOM 引用
+### 3.4 DOM 引用
 
 JavaScript 对象和 DOM 元素之间的循环引用会导致内存无法被回收。
 
